@@ -1233,20 +1233,41 @@
     setTimeout(()=>el.remove(), 6000);
   }
 
-  // Läser en nyckel från Supabase – returnerar parsat värde eller null
+  // Visas när databasen INTE kunde läsas in vid start. Ligger kvar (försvinner inte),
+  // eftersom appen då medvetet vägrar spara för att skydda befintlig data.
+  function showLoadError(){
+    if(document.getElementById('ek-load-error')) return;
+    const el = document.createElement('div');
+    el.id = 'ek-load-error';
+    el.className = 'ek-record-toast';
+    el.style.background = 'var(--red)';
+    el.style.cursor = 'pointer';
+    el.textContent = '⚠️ Kunde inte ladda kalendern (ingen anslutning). Inget sparas nu – tryck här för att försöka igen.';
+    el.onclick = ()=>{ location.reload(); };
+    document.body.appendChild(el);
+  }
+
+  // Läser en nyckel från Supabase.
+  // Returnerar: parsat värde om det finns, null om nyckeln inte finns (tomt),
+  // men KASTAR fel om själva läsningen misslyckades (nätverk/server) – så att
+  // anroparen kan skilja "det finns ingen data" från "vi kunde inte läsa".
   async function storageGetSafe(key){
-    try{
-      const res = await fetch(SB_ENDPOINT+'?key=eq.'+encodeURIComponent(key)+'&select=value', {
-        method: 'GET',
-        headers: SB_HEADERS
-      });
-      if(!res.ok){ return null; }
-      const rows = await res.json();
-      if(rows && rows.length>0 && rows[0].value!=null){
-        return JSON.parse(rows[0].value);
-      }
-      return null;
-    }catch(e){ return null; }
+    const res = await fetch(SB_ENDPOINT+'?key=eq.'+encodeURIComponent(key)+'&select=value', {
+      method: 'GET',
+      headers: SB_HEADERS
+    });
+    if(!res.ok){ throw new Error('Supabase-läsning misslyckades: HTTP '+res.status); }
+    const rows = await res.json();
+    if(rows && rows.length>0 && rows[0].value!=null){
+      return JSON.parse(rows[0].value);
+    }
+    return null; // nyckeln finns inte = genuint tomt
+  }
+
+  // Mjuk variant som aldrig kastar – används där ett fel inte är kritiskt.
+  async function storageGetQuiet(key){
+    try{ return await storageGetSafe(key); }
+    catch(e){ return null; }
   }
 
   // Generationsräknare: gör att en pågående månadsladdning avbryts tyst
@@ -1304,9 +1325,22 @@
 
     // Läs hela databasen EN gång (första laddningen). Därefter finns allt i minnet (DB).
     if(!dbLoaded){
-      DB = await loadDB();
-      if(!DB.pin){ DB.pin = '1313'; }
-      dbLoaded = true;
+      try{
+        DB = await loadDB();
+        if(!DB.pin){ DB.pin = '1313'; }
+        dbLoaded = true;
+        dbEverLoaded = true;
+        loadFailed = false;
+      }catch(e){
+        // KRITISKT: läsningen misslyckades. Vi vet inte vad som redan finns sparat.
+        // Spärra all sparning och visa tydlig varning – rör INTE befintlig data.
+        console.error('Kunde inte läsa databasen – sparning spärrad:', e);
+        loadFailed = true;
+        state.loaded = true;
+        showLoadError();
+        render();
+        return;
+      }
     }
     if(gen !== loadGeneration) return;
 
@@ -1641,11 +1675,19 @@
     };
   }
 
+  // ==== SKYDD MOT DATAFÖRLUST ====
+  // Om den första inläsningen misslyckas vet vi INTE vad som redan finns sparat.
+  // Då spärrar vi ALL sparning den här sessionen, så att vi aldrig råkar skriva
+  // tomma standardvärden ovanpå riktig data. Hellre "kunde inte ladda" än dataförlust.
+  let loadFailed = false;
+  let dbEverLoaded = false;
+
   // Läser hela databasen från Supabase (en enda läsning).
+  // Kastar vidare om läsningen misslyckas – så loadMonth kan spärra sparning.
   async function loadDB(){
-    const db = await storageGetSafe(DB_KEY);
+    const db = await storageGetSafe(DB_KEY); // kan kasta vid läsfel
     if(db){ return normalizeDB(db); }
-    // Ingen data ännu (t.ex. första gången) – börja med en tom databas.
+    // null = nyckeln finns genuint inte (första gången) → tom databas är korrekt
     return emptyDB();
   }
 
@@ -1665,9 +1707,24 @@
   // Läser först om DB för att slå ihop andras samtidiga ändringar (post-nivå).
   let saveAllPending = false;
   async function saveAll(){
+    // SKYDD 1: spara aldrig om första inläsningen misslyckades eller inte hunnit ske.
+    // Då vet vi inte vad som redan finns, och risken är att vi skriver över riktig data.
+    if(loadFailed || !dbEverLoaded){
+      console.error('Sparning spärrad: databasen är inte säkert inläst.');
+      showSaveError();
+      return;
+    }
     const ym = ymKey(state.year, state.month);
-    // slå ihop med senaste lagrade versionen så samtidiga användares tillägg bevaras
-    const remote = await storageGetSafe(DB_KEY);
+    // slå ihop med senaste lagrade versionen så samtidiga användares tillägg bevaras.
+    // Om läsningen misslyckas: spara INTE (annars kan vi skriva över nyare data).
+    let remote;
+    try{
+      remote = await storageGetSafe(DB_KEY);
+    }catch(e){
+      console.error('Kunde inte läsa inför sparning – hoppar över för att skydda data:', e);
+      showSaveError();
+      return;
+    }
     if(remote){
       const rn = normalizeDB(remote);
       // checklists för denna månad
