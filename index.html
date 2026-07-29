@@ -1,0 +1,2720 @@
+<style>
+  :root{
+    --gais-green:#0f5c34;
+    --gais-green-dark:#0a3d23;
+    --gais-green-light:#e5f3ea;
+    --gais-black:#14171a;
+    --paper:#f7f7f5;
+    --white:#ffffff;
+    --line:#d9ddd8;
+    --amber:#c98a1c;
+    --red:#b0392f;
+    --text:#1c211e;
+    --text-dim:#6b716c;
+    font-family:'Trebuchet MS', ui-sans-serif, system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  .ek-root{
+    background:var(--paper);
+    color:var(--text);
+    border-radius:16px;
+    padding:0;
+    max-width:900px;
+    margin:0 auto;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .ek-header{
+    background:linear-gradient(135deg,var(--gais-black) 0%, var(--gais-green-dark) 55%, var(--gais-green) 100%);
+    color:var(--white);
+    padding:22px 24px 20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .ek-header::after{
+    content:"";
+    position:absolute;
+    right:-40px;top:-40px;
+    width:160px;height:160px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.06);
+  }
+  .ek-header::before{
+    content:"";
+    position:absolute;
+    left:-30px;bottom:-60px;
+    width:140px;height:140px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.05);
+  }
+  .ek-title{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:0.5px;
+    margin:0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .ek-ball{
+    width:22px;height:22px;
+    display:inline-block;
+  }
+  .ek-sub{
+    margin:4px 0 0;
+    font-size:12.5px;
+    color:rgba(255,255,255,0.75);
+    font-weight:500;
+  }
+  .ek-nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 20px;
+    background:var(--white);
+    border-bottom:1px solid var(--line);
+  }
+  .ek-navbtn{
+    background:var(--gais-green);
+    color:#fff;
+    border:none;
+    width:32px;height:32px;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s;
+  }
+  .ek-navbtn:hover{background:var(--gais-green-dark);}
+  .ek-monthlabel{
+    font-weight:800;
+    font-size:16px;
+    text-transform:capitalize;
+    color:var(--gais-black);
+  }
+  .ek-todaybtn{
+    font-size:11px;
+    background:transparent;
+    border:1px solid var(--gais-green);
+    color:var(--gais-green);
+    padding:4px 10px;
+    border-radius:20px;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .ek-todaybtn:hover{background:var(--gais-green-light);}
+
+  .ek-cal{
+    padding:14px 20px 6px;
+    background:var(--white);
+  }
+  .ek-weekdays{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .ek-weekdays span{
+    text-align:center;
+    font-size:10.5px;
+    font-weight:800;
+    color:var(--text-dim);
+    text-transform:uppercase;
+  }
+  .ek-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:6px;
+    padding-bottom:16px;
+  }
+  .ek-day{
+    aspect-ratio:1/1;
+    border-radius:9px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    cursor:pointer;
+    position:relative;
+    transition:transform .1s, box-shadow .1s, background .15s;
+    font-size:13px;
+    font-weight:700;
+    color:var(--text);
+    padding:4px 2px 2px;
+    overflow:hidden;
+  }
+  .ek-day:hover{
+    transform:translateY(-2px);
+    box-shadow:0 3px 10px rgba(15,92,52,0.18);
+    background:var(--gais-green-light);
+  }
+  .ek-day.empty{
+    visibility:hidden;
+    cursor:default;
+  }
+  .ek-day.today{
+    background:var(--gais-green);
+    color:#fff;
+    border-color:var(--gais-green);
+  }
+  .ek-day.today:hover{background:var(--gais-green-dark);}
+  .ek-day.has-tasks{
+    background:#c9dccf;
+    border-color:#9fc2ab;
+  }
+  .ek-day.has-tasks:hover{background:#b7d0c0;}
+  .ek-day.has-special{
+    background:#fbe3c4;
+    border-color:#eec78d;
+  }
+  .ek-day.has-special:hover{background:#f7d5a8;}
+  .ek-day.today.has-special{
+    background:#c9822f;
+    border-color:#c9822f;
+  }
+  .ek-day.today.has-tasks{
+    background:var(--gais-green-dark);
+    border-color:var(--gais-green-dark);
+  }
+  .ek-day.ek-daydone{
+    background:#dcebe1;
+    border-color:#b7d0c0;
+  }
+  .ek-day.today.ek-daydone{
+    background:var(--gais-green);
+  }
+  .ek-daynum{
+    font-size:12px;
+    font-weight:800;
+    line-height:1.1;
+    margin-bottom:3px;
+  }
+  .ek-daytasks{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:1px;
+    width:100%;
+  }
+  .ek-daylabel{
+    font-size:7.5px;
+    font-weight:600;
+    line-height:1.2;
+    max-width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    opacity:.85;
+    padding:0 3px;
+    display:flex;
+    align-items:center;
+    gap:2px;
+    justify-content:flex-start;
+    text-align:left;
+    width:100%;
+  }
+  .ek-daylabel-match{
+    font-style:italic;
+    opacity:.8;
+  }
+  .ek-minicheck{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:9px;height:9px;
+    min-width:9px;
+    border-radius:2px;
+    border:1.3px solid var(--gais-green);
+    background:#fff;
+    font-size:7px;
+    color:#fff;
+    font-weight:900;
+    line-height:1;
+  }
+  .ek-minicheck.done{
+    background:var(--gais-green);
+    border-color:var(--gais-green);
+  }
+  .ek-day.today .ek-minicheck{border-color:#fff;}
+  .ek-day.today .ek-minicheck.done{background:#fff;color:var(--gais-green-dark);}
+  .ek-daybadge{
+    position:absolute;
+    top:2px;
+    right:2px;
+    background:var(--gais-black);
+    color:#fff;
+    font-size:8px;
+    font-weight:800;
+    border-radius:8px;
+    padding:0 4px;
+    line-height:13px;
+  }
+  .ek-day.today .ek-daybadge{background:rgba(255,255,255,0.35);}
+
+  .ek-section{
+    border-top:1px solid var(--line);
+    background:var(--white);
+  }
+  .ek-sectitle{
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-weight:800;
+    font-size:14px;
+    color:var(--gais-black);
+  }
+  .ek-body{padding:0 20px 18px;}
+
+  .ek-checklist{list-style:none;margin:0;padding:0;}
+  .ek-checkitem{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:9px 10px;
+    border-radius:10px;
+    margin-bottom:6px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    transition:background .15s;
+  }
+  .ek-checkrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .ek-checkitem.done{
+    background:var(--gais-green-light);
+    border-color:#bfe0cc;
+  }
+  .ek-checkitem.done .ek-checktext{
+    text-decoration:line-through;
+    color:var(--text-dim);
+  }
+  .ek-checkbox{
+    width:20px;height:20px;
+    min-width:20px;
+    border-radius:6px;
+    border:2px solid var(--gais-green);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#fff;
+    color:#fff;
+    font-size:13px;
+    font-weight:900;
+  }
+  .ek-checkitem.done .ek-checkbox{
+    background:var(--gais-green);
+  }
+  .ek-checktext{
+    flex:1;
+    font-size:13.5px;
+    font-weight:600;
+    letter-spacing:.2px;
+  }
+  .ek-delbtn{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    font-size:15px;
+    padding:2px 6px;
+    border-radius:6px;
+  }
+  .ek-delbtn:hover{color:var(--red);background:#fbeceb;}
+  .ek-noteinput{
+    margin-left:30px;
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:8px;
+    border:1px dashed var(--line);
+    background:#fff;
+    color:var(--text-dim);
+    font-style:italic;
+  }
+  .ek-noteinput:focus{
+    outline:1.5px solid var(--gais-green);
+    outline-offset:0;
+    color:var(--text);
+    font-style:normal;
+    border-style:solid;
+    background:#fff;
+  }
+  .ek-noteinput::placeholder{color:#a9afa9;}
+
+  .ek-addrow{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
+  }
+  .ek-input{
+    flex:1;
+    padding:9px 12px;
+    border-radius:9px;
+    border:1px solid var(--line);
+    font-size:13px;
+    background:var(--paper);
+    color:var(--text);
+  }
+  .ek-input:focus{outline:2px solid var(--gais-green);outline-offset:1px;}
+  .ek-addbtn{
+    background:var(--gais-black);
+    color:#fff;
+    border:none;
+    padding:9px 16px;
+    border-radius:9px;
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .ek-addbtn:hover{background:var(--gais-green-dark);}
+
+  .ek-fold{
+    border-top:1px solid var(--line);
+    background:var(--white);
+  }
+  .ek-foldhead{
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    user-select:none;
+    background:var(--gais-black);
+    color:#fff;
+  }
+  .ek-foldhead:hover{background:var(--gais-green-dark);}
+  .ek-foldtitle{
+    font-weight:900;
+    font-size:14px;
+    letter-spacing:.8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .ek-chev{
+    transition:transform .2s;
+    font-size:13px;
+  }
+  .ek-fold.open .ek-chev{transform:rotate(180deg);}
+  .ek-foldbody{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+  }
+  .ek-fold.open .ek-foldbody{max-height:60000px;}
+  .ek-foldinner{padding:16px 20px 20px;}
+
+  .ek-tablewrap{
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .ek-tab-group-title{
+    background:var(--gais-green);
+    color:#fff;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:.6px;
+    padding:8px 14px;
+    text-transform:uppercase;
+  }
+  table.ek-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+  }
+  table.ek-table th{
+    text-align:left;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    color:var(--text-dim);
+    padding:8px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  table.ek-table td{
+    padding:9px 12px;
+    font-size:13.5px;
+    border-bottom:1px solid var(--line);
+  }
+  table.ek-table tr:last-child td{border-bottom:none;}
+  table.ek-table tr:nth-child(even) td{background:var(--paper);}
+  .ek-tcell-input{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text);
+    padding:2px 4px;
+    border-radius:5px;
+  }
+  .ek-tcell-input:focus{outline:1.5px solid var(--gais-green);background:#fff;}
+  .ek-amount-input{width:80px;text-align:right;}
+  .ek-paidbox{
+    width:18px;height:18px;
+    border-radius:5px;
+    border:2px solid var(--gais-green);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:11px;font-weight:900;
+    background:#fff;
+  }
+  .ek-paidbox.paid{background:var(--gais-green);}
+  .ek-rowdel{
+    background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;
+  }
+  .ek-rowdel:hover{color:var(--red);}
+  .ek-sumbar{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 14px;
+    background:var(--gais-green-light);
+    font-weight:800;
+    font-size:13px;
+    color:var(--gais-green-dark);
+  }
+  .ek-addrow-mini{padding:8px 12px;background:#fff;}
+  .ek-addrow-mini button{
+    font-size:12px;
+    background:none;
+    border:1.5px dashed var(--gais-green);
+    color:var(--gais-green);
+    padding:6px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+  }
+  .ek-addrow-mini button:hover{background:var(--gais-green-light);}
+
+  .ek-modal-backdrop{
+    position:fixed;inset:0;
+    background:rgba(10,20,15,0.55);
+    display:flex;align-items:center;justify-content:center;
+    z-index:9999;
+    padding:16px;
+  }
+  .ek-modal{
+    background:#fff;
+    border-radius:16px;
+    width:100%;
+    max-width:420px;
+    max-height:85vh;
+    overflow-y:auto;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+  }
+  .ek-modalhead{
+    background:linear-gradient(120deg,var(--gais-black),var(--gais-green-dark));
+    color:#fff;
+    padding:18px 20px;
+    display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;
+  }
+  .ek-modaldate{font-weight:900;font-size:17px;text-transform:capitalize;}
+  .ek-closebtn{
+    background:rgba(255,255,255,0.15);
+    border:none;color:#fff;
+    width:28px;height:28px;border-radius:8px;
+    cursor:pointer;font-size:15px;
+  }
+  .ek-closebtn:hover{background:rgba(255,255,255,0.3);}
+  .ek-modalbody{padding:18px 20px;}
+  .ek-empty{
+    color:var(--text-dim);
+    font-size:13px;
+    text-align:center;
+    padding:14px 0;
+  }
+  .ek-loading{
+    padding:40px;text-align:center;color:var(--text-dim);font-size:13px;
+  }
+  .ek-footer-note{
+    text-align:center;
+    font-size:11px;
+    color:var(--text-dim);
+    padding:12px 20px 18px;
+    background:var(--white);
+  }
+  .ek-golf-intro{
+    font-size:12.5px;
+    color:var(--text-dim);
+    margin:0 0 14px;
+    line-height:1.5;
+  }
+  .ek-golf-highlights{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .ek-golf-card{
+    background:var(--gais-green-light);
+    border:1px solid #bfe0cc;
+    border-radius:10px;
+    padding:9px 10px;
+  }
+  .ek-golf-card .ek-gc-label{
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    color:var(--gais-green-dark);
+    font-weight:800;
+    display:block;
+    margin-bottom:2px;
+  }
+  .ek-golf-card .ek-gc-value{
+    font-size:15px;
+    font-weight:900;
+    color:var(--gais-black);
+    display:block;
+  }
+  .ek-golf-card .ek-gc-sub{
+    font-size:10px;
+    color:var(--text-dim);
+    display:block;
+    margin-top:1px;
+  }
+  .ek-golf-scroll{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  table.ek-golf-table{min-width:760px;}
+  table.ek-golf-table th, table.ek-golf-table td{white-space:nowrap;}
+  .ek-golf-diff-pos{color:var(--red);font-weight:800;}
+  .ek-golf-diff-neg{color:var(--gais-green-dark);font-weight:800;}
+  .ek-golf-diff-even{color:var(--text-dim);font-weight:800;}
+  .ek-golf-narrow{width:44px;text-align:center;}
+  .ek-golf-note{min-width:140px;}
+  .ek-job-textarea{
+    width:100%;
+    min-height:90px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--text);
+    font-size:13px;
+    font-family:inherit;
+    padding:10px 12px;
+    resize:vertical;
+  }
+  .ek-job-textarea:focus{outline:2px solid var(--gais-green);outline-offset:1px;}
+  .ek-job-subtitle{
+    font-weight:800;
+    font-size:12.5px;
+    color:var(--gais-black);
+    margin:0 0 8px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .ek-job-block{margin-bottom:18px;}
+  .ek-job-block:last-child{margin-bottom:0;}
+  .ek-edu-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .ek-edu-card:last-child{margin-bottom:0;}
+  .ek-edu-headrow{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .ek-edu-title-input{
+    flex:1;
+    font-size:15px;
+    font-weight:800;
+    border:none;
+    background:transparent;
+    color:var(--gais-black);
+    padding:4px 2px;
+    border-bottom:2px solid transparent;
+    font-family:inherit;
+  }
+  .ek-edu-title-input:focus{outline:none;border-bottom-color:var(--gais-green);}
+  .ek-edu-fav-label{
+    font-size:9.5px;
+    color:var(--text-dim);
+    font-weight:700;
+    margin-right:2px;
+  }
+  .ek-edu-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:8px 12px;
+    margin-bottom:10px;
+  }
+  .ek-edu-field{margin-bottom:10px;}
+  .ek-edu-field:last-child{margin-bottom:0;}
+  .ek-edu-field label{
+    font-size:9.5px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    color:var(--text-dim);
+    font-weight:800;
+    display:block;
+    margin-bottom:3px;
+  }
+  .ek-edu-input{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:7px 9px;
+    font-size:12.5px;
+    font-family:inherit;
+    background:var(--paper);
+    color:var(--text);
+  }
+  .ek-edu-input:focus{outline:2px solid var(--gais-green);outline-offset:1px;}
+  textarea.ek-edu-input{min-height:58px;resize:vertical;line-height:1.4;}
+  .ek-fin-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:12px;
+  }
+  .ek-fin-card:last-of-type{margin-bottom:0;}
+  .ek-fin-card.ek-fin-warn{
+    background:#fbf3e6;
+    border-color:#eddcb8;
+  }
+  .ek-fin-title{
+    font-weight:800;
+    font-size:13px;
+    color:var(--gais-black);
+    margin:0 0 6px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .ek-fin-card p{
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--text);
+    margin:0 0 6px;
+  }
+  .ek-fin-card p:last-child{margin-bottom:0;}
+  .ek-fin-card a{color:var(--gais-green-dark);font-weight:700;}
+  .ek-record-toast{
+    position:fixed;
+    top:16px;
+    left:50%;
+    transform:translateX(-50%);
+    background:linear-gradient(120deg,var(--gais-black),var(--gais-green-dark));
+    color:#fff;
+    padding:12px 22px;
+    border-radius:30px;
+    font-weight:800;
+    font-size:14px;
+    z-index:10001;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    animation:ek-toast-in .3s ease;
+    white-space:nowrap;
+  }
+  @keyframes ek-toast-in{
+    from{opacity:0;transform:translateX(-50%) translateY(-14px);}
+    to{opacity:1;transform:translateX(-50%) translateY(0);}
+  }
+  .ek-confetti-piece{
+    position:fixed;
+    top:-12px;
+    z-index:10000;
+    border-radius:2px;
+    animation-name:ek-confetti-fall;
+    animation-timing-function:ease-in;
+    animation-fill-mode:forwards;
+    pointer-events:none;
+  }
+  @keyframes ek-confetti-fall{
+    to{ transform:translateY(100vh) rotate(360deg); opacity:0.15; }
+  }
+</style>
+
+<div id="ek-app" class="ek-root">
+  <div class="ek-loading">Laddar din ekonomikalender…</div>
+</div>
+
+<script>
+(function(){
+  const root = document.getElementById('ek-app');
+  const WEEKDAYS = ['MÅN','TIS','ONS','TOR','FRE','LÖR','SÖN'];
+  const MONTHNAMES = ['januari','februari','mars','april','maj','juni','juli','augusti','september','oktober','november','december'];
+  const DEFAULT_CHECKLIST = [
+    {text:'STORHANDLA'},
+    {text:'REDOVISA JOBB AF'},
+    {text:'LÄMNA IN LÖNEAVI A-KASSAN'},
+    {text:'BETALA RÄKNINGAR'}
+  ];
+  const CHECKLIST_ORDER = ['STORHANDLA','REDOVISA JOBB AF','LÄMNA IN LÖNEAVI A-KASSAN','BETALA RÄKNINGAR'];
+  const CHECKLIST_RENAME = {
+    'HANDLA':'STORHANDLA',
+    'REDOVISA JOBB':'REDOVISA JOBB AF',
+    'LÄMNA IN LÖNEAVI':'LÄMNA IN LÖNEAVI A-KASSAN'
+  };
+
+  // Ingemars grundbudget, från INGEMAR-BUDGET-1
+  function freshDefaultBills(){
+    const mk = (name, amount, paid) => ({id:uid(), name, amount: (amount===''?'':amount), paid: !!paid});
+    return {
+      income: [
+        mk('Lön',''),
+        mk('a-kassa','')
+      ],
+      fixed: [],
+      variable: [],
+      loans: []
+    };
+  }
+
+  // FASTA RÄKNINGAR är numera en global mall som gäller alla månader.
+  // Denna lista används bara som frö första gången mallen skapas.
+  function defaultFixedTemplateSeed(){
+    const mk = (name, amount) => ({id:uid(), name, amount: (amount===''?'':amount), fromYm:null, toYm:null, history:[], baselines:[]});
+    return [
+      mk('Hyra',7200),
+      mk('Lån Gunnar',1000),
+      mk('Mobil',458),
+      mk('El',400),
+      mk('Resor',600),
+      mk('Internet Bahnhof',500),
+      mk('Hemförsäkring',200),
+      mk('A-kassan / facket',140),
+      mk('Mat & hushållsinköp',4000),
+      mk('Medicin',160),
+      mk('Golf & Nöjen',569),
+      mk('Träning',0)
+    ];
+  }
+
+  // Avgör om en mallrad ska vara aktiv en viss månad (fromYm/toYm = null betyder ingen begränsning)
+  function templateActiveForYm(tpl, ym){
+    if(tpl.fromYm && ym < tpl.fromYm) return false;
+    if(tpl.toYm && ym >= tpl.toYm) return false;
+    return true;
+  }
+
+  // Baslinjen för en viss månad: senaste PIN-skyddade baslinjeändring som trätt i kraft (fromYm <= ym),
+  // annars ursprungsbeloppet. Baslinjeändringar gäller "från och med" sin månad och framåt för alltid.
+  function baselineValueForYm(tpl, ym){
+    let best = null;
+    (tpl.baselines||[]).forEach(b=>{
+      if(b.fromYm <= ym && (!best || b.fromYm > best.fromYm)){ best = b; }
+    });
+    return best ? best.value : tpl.amount;
+  }
+
+  // Beloppet som visas en viss månad: en manuell justering för exakt den månaden vinner alltid,
+  // annars gäller baslinjen (som kan ha ändrats via PIN-skyddade baslinjeändringar).
+  function templateAmountForYm(tpl, ym){
+    const entry = (tpl.history||[]).find(h=>h.fromYm===ym);
+    if(entry) return entry.value;
+    return baselineValueForYm(tpl, ym);
+  }
+
+  // Global registry för återkommande dagsuppgifter (samma datum varje månad)
+  function freshDefaultRecurring(){
+    return [
+      {id:uid(), day:10, text:'REDOV. JOBB AF'},
+      {id:uid(), day:29, text:'BETALA RÄKNINGAR'},
+      {id:uid(), rule:'mondayBefore25', text:'OBS! LÖNEFIX!!!'},
+      {id:uid(), rule:'everyFridayExceptHoliday', text:'BOENDESTÖD'},
+      {id:uid(), rule:'everyDay', text:'ALLT ÄR OK', pinned:true}
+    ];
+  }
+
+  function freshDefaultJobData(){
+    return { agreements: [], applications: [], meetings: [], wishList: '' };
+  }
+
+  // Utbildningar från GRvux, förifyllda utifrån respektive utbildningssida
+  function freshDefaultEducations(){
+    const mk = (o) => ({id:uid(), intresserad:false, ...o});
+    return [
+      mk({
+        namn: 'IT-support och servicedesktekniker',
+        lank: 'https://grvux.se/utbildning/it-support-och-servicedesktekniker-4/',
+        ort: 'Mölndal (Campus Mölndal)',
+        studieform: 'Skolförlagt · Yrkespaket',
+        start: '2026-01-05',
+        omfattning: '100% · ca 1 år (2026-01-05–2026-12-18) · APL minst 15% (8 veckor)',
+        krav: 'Godkänt betyg (eller motsvarande kunskaper) i: Svenska/SVA grundläggande, Matematik grundläggande, Engelska grundläggande. Saknas betyg men kunskaperna finns – kontakta hemkommunens vuxenutbildning för nivåbedömning.',
+        beskrivning: 'Leder till kompetens som IT-supporttekniker (first-/second line-support onsite, telefon, mail, remote). Innehåll bl.a. Windows 10/Server, PowerShell, Active Directory, Microsoft 365, nätverksteknik, VPN, HyperV. OBS: enligt sidan just nu ej öppen för förlängd ansökan ("Ej sökbar").',
+        sistaAnsokan: 'Ej sökbar just nu (kolla länken för uppdatering)',
+        kommentar: ''
+      }),
+      mk({
+        namn: 'Dataanalytiker bas',
+        lank: 'https://grvux.se/utbildning/dataanalytiker-bas-4/',
+        ort: 'Lerum',
+        studieform: 'Distans (uppstartsmöte + 3 obligatoriska träffar)',
+        start: '2026-01-12',
+        omfattning: '100% · studieperioder 2026-01-12–2026-07-03, 2026-08-03–2026-12-25, 2026-12-28–2027-02-12 · APL 15–29%',
+        krav: 'Godkänt betyg (eller motsvarande) i: Matematik grundläggande, Engelska grundläggande. Saknas betyg – kontakta hemkommunens vuxenutbildning för nivåbedömning.',
+        beskrivning: 'Grundläggande programmering och dataanalys – förbereder för roller som programmerare, webbanalytiker, datavetare eller dataanalytiker. 1–2 obligatoriska onlinelektioner/vecka + eget arbete. Undervisning på engelska. OBS: enligt sidan just nu "Ej sökbar".',
+        sistaAnsokan: 'Ej sökbar just nu (kolla länken för uppdatering)',
+        kommentar: ''
+      }),
+      mk({
+        namn: 'AI och Datautvecklare bas',
+        lank: 'https://grvux.se/utbildning/ai-och-datautvecklare-bas/',
+        ort: 'Lerum',
+        studieform: 'Distans (uppstartsmöte + upp till 6 obligatoriska fysiska möten)',
+        start: '2026-08-10',
+        omfattning: '100% · studieperioder 2026-08-10–2027-01-01, 2027-01-04–2027-07-02, 2027-08-02–2027-11-05 · APL 15–29%',
+        krav: 'Godkänt betyg (eller motsvarande) i: Engelska grundläggande, Matematik gymnasial nivå 1. Saknas betyg – kontakta hemkommunens vuxenutbildning för nivåbedömning.',
+        beskrivning: 'Grund i Python-programmering, datahantering och AI-baserade lösningar – förbereder för roller inom data, AI och mjukvaruutveckling, med avslutande praktikperiod. Undervisning på engelska, material finns även på svenska.',
+        sistaAnsokan: 'Ej sökbar (Anmälningskod: GRY-ADU-2608-LM)',
+        kommentar: ''
+      })
+    ];
+  }
+
+  // GAIS matcher (Allsvenskan/Svenska Cupen/Ligacupen/Conference League), hämtat från gais.se
+  function matchHomeAwaySuffix(label){
+    return label.trim().indexOf('GAIS')===0 ? 'H' : 'B';
+  }
+  function freshDefaultGaisMatches(){
+    const mk = (date, label, time, comp, venue) => ({id:uid(), date, label, note: time+' · '+comp+' · '+venue});
+    return [
+      mk('2026-07-06','BP - GAIS','19:00','Allsvenskan','Grimsta IP'),
+      mk('2026-07-12','GAIS - Elfsborg','16:30','Allsvenskan','Gamla Ullevi'),
+      mk('2026-07-18','AIK - GAIS','15:00','Allsvenskan','Strawberry Arena'),
+      mk('2026-07-23','GAIS - Nordsjælland','19:00','Conference League','Gamla Ullevi'),
+      mk('2026-07-26','GAIS - Halmstad','16:30','Allsvenskan','Gamla Ullevi'),
+      mk('2026-07-30','Nordsjælland - GAIS','19:00','Conference League','Right to Dream Park'),
+      mk('2026-08-09','Halmstad - GAIS','16:30','Allsvenskan','Örjans Vall'),
+      mk('2026-08-16','GAIS - Malmö FF','16:30','Allsvenskan','Gamla Ullevi'),
+      mk('2026-08-23','Hammarby - GAIS','16:30','Allsvenskan','3 Arena'),
+      mk('2026-08-27','Husqvarna FF - GAIS','19:00','Svenska Cupen','Vapenvallen'),
+      mk('2026-08-31','GAIS - Brommapojkarna','19:00','Allsvenskan','Gamla Ullevi'),
+      mk('2026-09-05','GAIS - Häcken','15:00','Allsvenskan','Gamla Ullevi'),
+      mk('2026-09-14','Djurgården - GAIS','19:00','Allsvenskan','3 Arena'),
+      mk('2026-09-20','Mjällby - GAIS','16:30','Allsvenskan','Strandvallen'),
+      mk('2026-09-29','GAIS - Örgryte','14:00','Ligacupen Elit','GAIS-gården'),
+      mk('2026-10-10','GAIS - Sirius','15:00','Allsvenskan','Gamla Ullevi')
+    ];
+  }
+  // Skyddade påminnelser – kräver PIN-kod för att tas bort
+  const PROTECTED_TEXTS = ['BETALA RÄKNINGAR','REDOVISA JOBB AF','REDOV. JOBB AF','OBS! LÖNEFIX!!!','ALLT ÄR OK','BOENDESTÖD'];
+  function isProtectedText(text){ return PROTECTED_TEXTS.includes(text); }
+
+  // Specialdagar (orange markering) + firande när de bockas av
+  const SPECIAL_TEXTS = ['REDOV. JOBB AF','BETALA RÄKNINGAR','OBS! LÖNEFIX!!!'];
+  const SPECIAL_DONE_MESSAGES = {
+    'REDOV. JOBB AF': 'Jobbet redovisat – snyggt jobbat!',
+    'BETALA RÄKNINGAR': 'Räkningarna betalda – grönt ljus!',
+    'OBS! LÖNEFIX!!!': 'Lönefixen klar – kanonjobbat!'
+  };
+
+  async function ensurePin(){
+    return DB.pin || null;
+  }
+  async function savePin(pin){
+    DB.pin = pin;
+    enqueueSave(DB_KEY, JSON.stringify(DB), true);
+  }
+
+  function openPinModal(opts){
+    const isSet = opts.mode==='set';
+    const message = opts.message || (isSet
+      ? 'Den här påminnelsen är skyddad. Skapa en kod (minst 4 siffror) som bara du känner till, så krävs den framöver för att ta bort skyddade påminnelser.'
+      : 'Den här påminnelsen är skyddad. Ange PIN-koden för att ta bort den.');
+    const backdrop = document.createElement('div');
+    backdrop.className = 'ek-modal-backdrop';
+    backdrop.innerHTML = `
+      <div class="ek-modal" style="max-width:320px;">
+        <div class="ek-modalhead">
+          <div class="ek-modaldate" style="font-size:15px;">${isSet ? '🔒 Skapa en PIN-kod' : '🔒 Ange PIN-kod'}</div>
+          <button class="ek-closebtn" data-act="pin-close">✕</button>
+        </div>
+        <div class="ek-modalbody">
+          <p style="font-size:12.5px;color:var(--text-dim);margin:0 0 10px;">${message}</p>
+          <input id="ek-pin-input" class="ek-input" type="password" inputmode="numeric" maxlength="6" placeholder="PIN-kod" style="text-align:center;letter-spacing:4px;font-size:16px;" />
+          ${isSet ? '<input id="ek-pin-input2" class="ek-input" type="password" inputmode="numeric" maxlength="6" placeholder="Upprepa PIN-kod" style="text-align:center;letter-spacing:4px;font-size:16px;margin-top:8px;" />' : ''}
+          <div id="ek-pin-error" style="color:var(--red);font-size:12px;margin-top:8px;display:none;"></div>
+          <button class="ek-addbtn" id="ek-pin-submit" style="width:100%;margin-top:12px;">${isSet?'Spara kod':'Bekräfta'}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+    const close = ()=>{ document.body.removeChild(backdrop); };
+    backdrop.querySelector('[data-act="pin-close"]').onclick = close;
+    backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) close(); });
+    const submit = backdrop.querySelector('#ek-pin-submit');
+    const inp1 = backdrop.querySelector('#ek-pin-input');
+    function showErr(msg){
+      const e = backdrop.querySelector('#ek-pin-error');
+      e.textContent = msg;
+      e.style.display='block';
+    }
+    submit.onclick = async ()=>{
+      const v1 = inp1.value.trim();
+      if(isSet){
+        const v2 = backdrop.querySelector('#ek-pin-input2').value.trim();
+        if(v1.length<4){ showErr('PIN-koden måste vara minst 4 siffror.'); return; }
+        if(v1!==v2){ showErr('Koderna matchar inte.'); return; }
+        await savePin(v1);
+        close();
+        opts.onSuccess();
+      } else {
+        const stored = await ensurePin();
+        if(stored && v1===stored){
+          close();
+          opts.onSuccess();
+        } else {
+          showErr('Fel PIN-kod, försök igen.');
+        }
+      }
+    };
+    inp1.addEventListener('keydown', e=>{ if(e.key==='Enter') submit.click(); });
+    setTimeout(()=>inp1.focus(), 50);
+  }
+
+  async function guardedDelete(onConfirmed){
+    const pin = await ensurePin();
+    openPinModal({mode: pin ? 'verify' : 'set', onSuccess: onConfirmed});
+  }
+
+  // PIN-skyddad ändring av standardbelopp: gäller från innevarande månad och framåt för alltid,
+  // tidigare månader behåller sina gamla belopp.
+  async function guardedBaselineEdit(templateId){
+    const pin = await ensurePin();
+    openPinModal({
+      mode: pin ? 'verify' : 'set',
+      message: 'Standardbeloppet är skyddat. Ange PIN-koden för att ändra det.',
+      onSuccess: ()=>openBaselineModal(templateId)
+    });
+  }
+
+  function openBaselineModal(templateId){
+    const tpl = state.fixedTemplates.find(t=>t.id===templateId);
+    if(!tpl) return;
+    const currentYm = ymKey(state.year, state.month);
+    const currentBaseline = baselineValueForYm(tpl, currentYm);
+    const monthLabel = MONTHNAMES[state.month]+' '+state.year;
+    const backdrop = document.createElement('div');
+    backdrop.className = 'ek-modal-backdrop';
+    backdrop.innerHTML = `
+      <div class="ek-modal" style="max-width:340px;">
+        <div class="ek-modalhead">
+          <div class="ek-modaldate" style="font-size:15px;">Nytt standardbelopp</div>
+          <button class="ek-closebtn" data-act="bl-close">✕</button>
+        </div>
+        <div class="ek-modalbody">
+          <p style="font-size:12.5px;color:var(--text-dim);margin:0 0 10px;">
+            <b>${escapeHtml(tpl.name||'')}</b> — det nya beloppet gäller från och med <b>${monthLabel}</b> och alla kommande månader. Tidigare månader behåller sina gamla belopp.
+          </p>
+          <input id="ek-bl-input" class="ek-input" inputmode="numeric" placeholder="Belopp i kr" value="${escapeAttr(String(currentBaseline??''))}" style="text-align:center;font-size:16px;font-weight:700;" />
+          <button class="ek-addbtn" id="ek-bl-submit" style="width:100%;margin-top:12px;">Spara nytt standardbelopp</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+    const close = ()=>{ document.body.removeChild(backdrop); };
+    backdrop.querySelector('[data-act="bl-close"]').onclick = close;
+    backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) close(); });
+    const inp = backdrop.querySelector('#ek-bl-input');
+    const submit = backdrop.querySelector('#ek-bl-submit');
+    submit.onclick = async ()=>{
+      const val = inp.value.replace(/[^0-9.,]/g,'').replace(',','.');
+      tpl.baselines = tpl.baselines || [];
+      const existing = tpl.baselines.find(b=>b.fromYm===currentYm);
+      if(existing){ existing.value = val; }
+      else { tpl.baselines.push({value:val, fromYm:currentYm}); }
+      // en baslinjeändring ersätter ev. månadsjustering för just den här månaden
+      tpl.history = (tpl.history||[]).filter(h=>h.fromYm!==currentYm);
+      const row = (state.bills.fixed||[]).find(r=>r.templateId===tpl.id);
+      if(row){ row.amount = templateAmountForYm(tpl, currentYm); }
+      close();
+      state.billsOpen = true;
+      render();
+      await saveFixedTemplates();
+      await saveBills();
+    };
+    inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submit.click(); });
+    setTimeout(()=>{ inp.focus(); inp.select(); }, 50);
+  }
+
+  // Sätter en förvald PIN-kod tyst i bakgrunden, om ingen kod finns sedan tidigare.
+  // Koden visas aldrig i gränssnittet.
+  // Räknar ut vilket datum "måndagen innan den 25:e" landar på för en given månad
+  function computeMondayBefore25(year, monthIdx){
+    let d = new Date(year, monthIdx, 24); // dagen innan den 25:e
+    while(d.getDay() !== 1){ d.setDate(d.getDate()-1); } // 1 = måndag
+    return d.getDate();
+  }
+
+  // Långfredagen (Good Friday) via Meeus/Jones/Butcher-algoritmen för påskdagen
+  function computeGoodFriday(year){
+    const a = year % 19;
+    const b = Math.floor(year/100);
+    const c = year % 100;
+    const d = Math.floor(b/4);
+    const e = b % 4;
+    const f = Math.floor((b+8)/25);
+    const g = Math.floor((b-f+1)/3);
+    const h = (19*a+b-d-g+15) % 30;
+    const i = Math.floor(c/4);
+    const k = c % 4;
+    const l = (32+2*e+2*i-h-k) % 7;
+    const m = Math.floor((a+11*h+22*l)/451);
+    const month = Math.floor((h+l-7*m+114)/31); // 3=mars,4=april
+    const day = ((h+l-7*m+114) % 31) + 1;
+    const easterSunday = new Date(year, month-1, day);
+    const goodFriday = new Date(easterSunday);
+    goodFriday.setDate(easterSunday.getDate()-2);
+    return goodFriday;
+  }
+
+  const FIXED_HOLIDAYS = [[0,1],[0,6],[4,1],[5,6],[11,24],[11,25],[11,26],[11,31]]; // nyårsdagen, trettondag jul, 1 maj, nationaldagen, julafton, juldagen, annandag jul, nyårsafton
+  function isSwedishHoliday(year, monthIdx, day){
+    if(FIXED_HOLIDAYS.some(([m,d])=>m===monthIdx && d===day)) return true;
+    // midsommarafton: fredagen mellan 19–25 juni, alltid en fredag
+    if(monthIdx===5 && day>=19 && day<=25 && new Date(year, monthIdx, day).getDay()===5) return true;
+    const gf = computeGoodFriday(year);
+    if(gf.getFullYear()===year && gf.getMonth()===monthIdx && gf.getDate()===day) return true;
+    return false;
+  }
+
+  // Alla fredagar i månaden som inte är en helgdag
+  function computeFridaysExcludingHolidays(year, monthIdx){
+    const total = daysInMonth(year, monthIdx);
+    const result = [];
+    for(let d=1; d<=total; d++){
+      const dt = new Date(year, monthIdx, d);
+      if(dt.getDay()===5 && !isSwedishHoliday(year, monthIdx, d)){
+        result.push(d);
+      }
+    }
+    return result;
+  }
+
+  // Alla dagar i månaden (för dagliga återkommande uppgifter)
+  function computeAllDaysInMonth(year, monthIdx){
+    const total = daysInMonth(year, monthIdx);
+    const result = [];
+    for(let d=1; d<=total; d++){ result.push(d); }
+    return result;
+  }
+
+  let state = {
+    year: null, month: null, // month 0-indexed
+    checklist: [],
+    bills: {income:[], fixed:[], variable:[], loans:[]},
+    daytasks: {},
+    recurringTasks: [],
+    golfRounds: [],
+    gaisMatches: [],
+    jobData: {agreements:[], applications:[], meetings:[], wishList:''},
+    educations: [],
+    financeNotes: '',
+    fixedTemplates: [],
+    golfOpen: false,
+    jobOpen: false,
+    eduOpen: false,
+    financeOpen: false,
+    openDay: null,
+    billsOpen: true,
+    loaded: false
+  };
+
+  // OBS: används som en funktion (inte en fast variabel) så att "idag" alltid är korrekt,
+  // även om sidan/fliken lämnas öppen över midnatt eller flera dagar.
+  function getNow(){ return new Date(); }
+  const initialNow = getNow();
+  state.year = initialNow.getFullYear();
+  state.month = initialNow.getMonth();
+
+  function ymKey(y,m){ return y + '-' + String(m+1).padStart(2,'0'); }
+  function prevYmKey(y,m){
+    let pm = m-1, py = y;
+    if(pm<0){ pm = 11; py = y-1; }
+    return ymKey(py, pm);
+  }
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+
+  // ---- Serialiserad sparkö ----
+  // Plattformen har en hastighetsgräns (rate limit) för skrivningar. Om appen skickar många
+  // sparningar samtidigt (t.ex. vid första laddning av en tom länk) stryps de och allt fastnar.
+  // Därför skickas ALLA sparningar via en kö: en i taget, med paus emellan, och kraftig
+  // backoff om vi ändå träffar gränsen.
+  const saveQueue = new Map(); // key -> senaste värdet som väntar på att skrivas (dedupe)
+  let queueRunning = false;
+  let rateLimitUntil = 0;
+
+  function enqueueSave(key, value, silent){
+    // senaste värdet per nyckel vinner – ingen mening att skriva mellanlägen
+    saveQueue.set(key, {value, silent});
+    if(!queueRunning){ runSaveQueue(); }
+  }
+
+  async function runSaveQueue(){
+    queueRunning = true;
+    while(saveQueue.size > 0){
+      // respektera ev. pågående rate-limit-paus
+      const wait = rateLimitUntil - Date.now();
+      if(wait > 0){ await new Promise(r=>setTimeout(r, wait)); }
+
+      const key = saveQueue.keys().next().value;
+      const {value, silent} = saveQueue.get(key);
+      saveQueue.delete(key);
+
+      const ok = await writeOnce(key, value, silent);
+      if(!ok && !silent){ showSaveError(); }
+      // liten paus mellan varje skrivning så vi aldrig spammar gränsen
+      await new Promise(r=>setTimeout(r, 250));
+    }
+    queueRunning = false;
+  }
+
+  // ==== SUPABASE-LAGRING ====
+  // Data sparas i en Supabase-tabell (app_state) istället för Claudes window.storage.
+  // Det tar bort rate limit-problemet och gör appen oberoende av var den körs.
+  const SUPABASE_URL = 'https://qqzpqbnqdykcybxolbmt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Ai0AV6m5lMGnOEX0x-rTZw_cLoP1gfY';
+  const SB_ENDPOINT = SUPABASE_URL + '/rest/v1/app_state';
+  const SB_HEADERS = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_KEY,
+    'Content-Type': 'application/json'
+  };
+
+  async function writeOnce(key, value, silent){
+    const maxAttempts = 3;
+    for(let attempt=1; attempt<=maxAttempts; attempt++){
+      try{
+        // upsert: skapa eller uppdatera raden med denna key
+        const res = await fetch(SB_ENDPOINT+'?on_conflict=key', {
+          method: 'POST',
+          headers: Object.assign({}, SB_HEADERS, {'Prefer': 'resolution=merge-duplicates'}),
+          body: JSON.stringify({key: key, value: value})
+        });
+        if(res.ok){ return true; }
+        console.error('Supabase-skrivning misslyckades (försök '+attempt+'/'+maxAttempts+') för '+key+': HTTP '+res.status);
+      }catch(e){
+        console.error('Supabase-skrivning fel (försök '+attempt+'/'+maxAttempts+') för '+key+':', e);
+      }
+      if(attempt<maxAttempts){
+        await new Promise(r=>setTimeout(r, 500*attempt));
+      }
+    }
+    console.error('Supabase-skrivning misslyckades permanent för nyckel: '+key);
+    return false;
+  }
+
+  // Bakåtkompatibel wrapper – all gammal kod som anropar storageSetSafe går nu via kön
+  async function storageSetSafe(key, value, shared, silent){
+    enqueueSave(key, value, silent);
+    return true;
+  }
+
+  // Synlig varning när en sparning misslyckats permanent – annars tror användaren att allt sparats
+  function showSaveError(){
+    if(document.getElementById('ek-save-error')) return;
+    const el = document.createElement('div');
+    el.id = 'ek-save-error';
+    el.className = 'ek-record-toast';
+    el.style.background = 'var(--red)';
+    el.textContent = '⚠️ Kunde inte spara senaste ändringen – ladda om sidan och försök igen';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 6000);
+  }
+
+  // Visas när databasen INTE kunde läsas in vid start. Ligger kvar (försvinner inte),
+  // eftersom appen då medvetet vägrar spara för att skydda befintlig data.
+  function showLoadError(){
+    if(document.getElementById('ek-load-error')) return;
+    const el = document.createElement('div');
+    el.id = 'ek-load-error';
+    el.className = 'ek-record-toast';
+    el.style.background = 'var(--red)';
+    el.style.cursor = 'pointer';
+    el.textContent = '⚠️ Kunde inte ladda kalendern (ingen anslutning). Inget sparas nu – tryck här för att försöka igen.';
+    el.onclick = ()=>{ location.reload(); };
+    document.body.appendChild(el);
+  }
+
+  // Läser en nyckel från Supabase.
+  // Returnerar: parsat värde om det finns, null om nyckeln inte finns (tomt),
+  // men KASTAR fel om själva läsningen misslyckades (nätverk/server) – så att
+  // anroparen kan skilja "det finns ingen data" från "vi kunde inte läsa".
+  async function storageGetSafe(key){
+    const res = await fetch(SB_ENDPOINT+'?key=eq.'+encodeURIComponent(key)+'&select=value', {
+      method: 'GET',
+      headers: SB_HEADERS
+    });
+    if(!res.ok){ throw new Error('Supabase-läsning misslyckades: HTTP '+res.status); }
+    const rows = await res.json();
+    if(rows && rows.length>0 && rows[0].value!=null){
+      return JSON.parse(rows[0].value);
+    }
+    return null; // nyckeln finns inte = genuint tomt
+  }
+
+  // Mjuk variant som aldrig kastar – används där ett fel inte är kritiskt.
+  async function storageGetQuiet(key){
+    try{ return await storageGetSafe(key); }
+    catch(e){ return null; }
+  }
+
+  // Generationsräknare: gör att en pågående månadsladdning avbryts tyst
+  // om användaren hunnit byta månad igen, så data aldrig sparas till fel månad.
+  let loadGeneration = 0;
+
+  // ---- Skydd mot att samtidiga användare skriver över varandras ändringar ----
+  // Före varje sparning läses den senaste versionen om och slås ihop med våra ändringar:
+  // poster som någon annan lagt till bevaras, poster vi själva tagit bort i denna session
+  // återuppstår inte.
+  const sessionDeletedIds = new Set();
+
+  function mergeById(localArr, remoteArr){
+    const local = localArr||[];
+    const remote = remoteArr||[];
+    const localIds = new Set(local.map(i=>i&&i.id).filter(Boolean));
+    const merged = [...local];
+    remote.forEach(item=>{
+      if(item && item.id && !localIds.has(item.id) && !sessionDeletedIds.has(item.id)){
+        merged.push(item);
+      }
+    });
+    return merged;
+  }
+
+  // Tar bort dubbletter som kan uppstå om två användare skapade samma regel-/matchinstans samtidigt
+  function dedupeDayArr(arr){
+    const seenRec = new Set(), seenMatch = new Set();
+    return (arr||[]).filter(t=>{
+      if(t.recurringId){ if(seenRec.has(t.recurringId)) return false; seenRec.add(t.recurringId); }
+      if(t.matchId){ if(seenMatch.has(t.matchId)) return false; seenMatch.add(t.matchId); }
+      return true;
+    });
+  }
+
+  // Sorterar en dags uppgiftslista för visning: pinnade (t.ex. ALLT ÄR OK) först, matcher alltid sist
+  function sortDayTasks(tasks){
+    return [...(tasks||[])].sort((a,b)=>{
+      const rank = t => t.pinned ? 0 : (t.matchId ? 2 : 1);
+      return rank(a) - rank(b);
+    });
+  }
+
+  let dbLoaded = false;
+  async function loadMonth(){
+    const gen = ++loadGeneration;
+    const ym = ymKey(state.year, state.month);
+    const prevYm = prevYmKey(state.year, state.month);
+    state.loaded = false;
+    // töm månadsbunden data direkt så att förra månadens uppgifter inte visas på fel dagar under laddning
+    state.daytasks = {};
+    state.checklist = [];
+    state.bills = freshDefaultBills();
+    render();
+
+    // Läs hela databasen EN gång (första laddningen). Därefter finns allt i minnet (DB).
+    if(!dbLoaded){
+      try{
+        DB = await loadDB();
+        if(!DB.pin){ DB.pin = '1313'; }
+        dbLoaded = true;
+        dbEverLoaded = true;
+        loadFailed = false;
+      }catch(e){
+        // KRITISKT: läsningen misslyckades. Vi vet inte vad som redan finns sparat.
+        // Spärra all sparning och visa tydlig varning – rör INTE befintlig data.
+        console.error('Kunde inte läsa databasen – sparning spärrad:', e);
+        loadFailed = true;
+        state.loaded = true;
+        showLoadError();
+        render();
+        return;
+      }
+    }
+    if(gen !== loadGeneration) return;
+
+    // Plocka ut denna månads + globala data ur DB (ingen ny serverläsning)
+    const cData = DB.checklists[ym] || null;
+    const bData = DB.bills[ym] || null;
+    const pbData = DB.bills[prevYm] || null;
+    const ftData = DB.fixedTemplates || null;
+    const rData = DB.recurringTasks || null;
+    const dData = DB.daytasks[ym] || null;
+    const gmData = DB.gaisMatches || null;
+    const gData = DB.golfRounds || null;
+    const jData = DB.jobData || null;
+    const eData = DB.educations || null;
+    const fnData = DB.financeNotes;
+
+    // ---- Bearbeta allt synkront i minnet ----
+    let checklistChanged = false, billsChanged = false, templatesChanged = false;
+    let recurringChanged = false, daytasksChanged = false, gaisChanged = false;
+    let prevBillsChanged = false, jobChanged = false, eduChanged = false;
+
+    // 1. Checklista
+    state.checklist = cData || DEFAULT_CHECKLIST.map(d=>({id:uid(), text:d.text, done:false}));
+    if(!cData){ checklistChanged = true; }
+    state.checklist.forEach(item=>{
+      if(CHECKLIST_RENAME[item.text]){ item.text = CHECKLIST_RENAME[item.text]; checklistChanged = true; }
+    });
+    {
+      const before = state.checklist.map(i=>i.id).join(',');
+      state.checklist.sort((a,b)=>{
+        const ia = CHECKLIST_ORDER.indexOf(a.text); const ib = CHECKLIST_ORDER.indexOf(b.text);
+        return (ia===-1?999:ia) - (ib===-1?999:ib);
+      });
+      if(before !== state.checklist.map(i=>i.id).join(',')) checklistChanged = true;
+    }
+
+    // 2. Mall för fasta räkningar
+    state.fixedTemplates = ftData || defaultFixedTemplateSeed();
+    if(!ftData){ templatesChanged = true; }
+    state.fixedTemplates.forEach(t=>{
+      if(t.fromYm===undefined){ t.fromYm = null; templatesChanged = true; }
+      if(t.toYm===undefined){ t.toYm = null; templatesChanged = true; }
+      if(t.history===undefined){ t.history = []; templatesChanged = true; }
+      if(t.baselines===undefined){ t.baselines = []; templatesChanged = true; }
+      if(t.name==='Lån Gunnar' && Number(t.amount)!==1000){ t.amount = 1000; templatesChanged = true; }
+      if(t.name==='Golf & Nöjen' && Number(t.amount)!==569){ t.amount = 569; templatesChanged = true; }
+    });
+    {
+      const corrections = {'Resor':600, 'A-kassan / facket':140, 'Medicin':160, 'Träning':0};
+      state.fixedTemplates.forEach(t=>{
+        if(corrections[t.name]!==undefined){
+          if(Number(t.amount||0)!==corrections[t.name]){ t.amount = corrections[t.name]; templatesChanged = true; }
+          const stray = (t.history||[]).findIndex(h=>h.fromYm==='2026-07' && Number(h.value)===corrections[t.name]);
+          if(stray!==-1){ t.history.splice(stray,1); templatesChanged = true; }
+        }
+      });
+    }
+
+    // 3. Månadens räkningar
+    state.bills = bData || freshDefaultBills();
+    if(!bData){ billsChanged = true; }
+    state.bills.loans = state.bills.loans || [];
+    state.bills.fixed = state.bills.fixed || [];
+    (state.bills.income||[]).forEach(r=>{
+      if(r.name === 'Lön Säkra'){ r.name = 'Lön'; billsChanged = true; }
+    });
+    // synka fasta räkningar mot mallen utifrån aktiv-period och beloppshistorik
+    state.fixedTemplates.forEach(tpl=>{
+      const active = templateActiveForYm(tpl, ym);
+      const effectiveAmount = templateAmountForYm(tpl, ym);
+      const existing = state.bills.fixed.find(r=>r.templateId===tpl.id);
+      if(active){
+        if(!existing){
+          state.bills.fixed.push({id:uid(), name:tpl.name, amount:effectiveAmount, dueDate:'', paid:false, templateId:tpl.id});
+          billsChanged = true;
+        } else {
+          if(existing.name !== tpl.name){ existing.name = tpl.name; billsChanged = true; }
+          if(String(existing.amount) !== String(effectiveAmount)){ existing.amount = effectiveAmount; billsChanged = true; }
+        }
+      } else if(existing){
+        state.bills.fixed = state.bills.fixed.filter(r=>r.id!==existing.id);
+        billsChanged = true;
+      }
+    });
+    {
+      const validTemplateIds = new Set(state.fixedTemplates.map(t=>t.id));
+      const before = state.bills.fixed.length;
+      state.bills.fixed = state.bills.fixed.filter(r=>r.templateId && validTemplateIds.has(r.templateId));
+      if(state.bills.fixed.length !== before){ billsChanged = true; }
+    }
+
+    // 4. För över obetalda tillfälliga lån från föregående månad
+    const prevBills = pbData;
+    if(prevBills && (prevBills.loans||[]).length>0){
+      prevBills.loans.forEach(loan=>{
+        if(!loan.paid && !loan.carriedForward){
+          const existingCarried = state.bills.loans.find(l=>l.carriedFromId===loan.id);
+          if(!existingCarried){
+            const carriedName = (loan.name||'').indexOf('↩ ')===0 ? loan.name : ('↩ '+(loan.name||''));
+            state.bills.loans.push({id:uid(), name:carriedName, amount:loan.amount, dueDate:'', paid:false, carriedFromId:loan.id, carriedForward:false, userEdited:false});
+            billsChanged = true;
+          } else if(!existingCarried.userEdited){
+            // kopian är ännu inte manuellt ändrad → håll beloppet synkat med originalet,
+            // så att t.ex. ett belopp som fylldes i förra månaden EFTER överföringen hinner ikapp
+            if(String(existingCarried.amount) !== String(loan.amount)){
+              existingCarried.amount = loan.amount;
+              billsChanged = true;
+            }
+          }
+          loan.carriedForward = true;
+          prevBillsChanged = true;
+        }
+      });
+    }
+
+    // 5. Återkommande uppgifter (global lista)
+    state.recurringTasks = rData || freshDefaultRecurring();
+    if(!rData){ recurringChanged = true; }
+    if(!state.recurringTasks.some(rt=>rt.day===10 && rt.text==='REDOV. JOBB AF' && !rt.rule)){
+      state.recurringTasks.push({id:uid(), day:10, text:'REDOV. JOBB AF'});
+      recurringChanged = true;
+    }
+    if(!state.recurringTasks.some(rt=>rt.day===29 && rt.text==='BETALA RÄKNINGAR' && !rt.rule)){
+      state.recurringTasks.push({id:uid(), day:29, text:'BETALA RÄKNINGAR'});
+      recurringChanged = true;
+    }
+    if(!state.recurringTasks.some(rt=>rt.rule==='mondayBefore25')){
+      state.recurringTasks.push({id:uid(), rule:'mondayBefore25', text:'OBS! LÖNEFIX!!!'});
+      recurringChanged = true;
+    }
+    if(!state.recurringTasks.some(rt=>rt.rule==='everyFridayExceptHoliday')){
+      state.recurringTasks.push({id:uid(), rule:'everyFridayExceptHoliday', text:'BOENDESTÖD'});
+      recurringChanged = true;
+    }
+    if(!state.recurringTasks.some(rt=>rt.rule==='everyDay')){
+      state.recurringTasks.push({id:uid(), rule:'everyDay', text:'ALLT ÄR OK', pinned:true});
+      recurringChanged = true;
+    }
+    state.recurringTasks.forEach(rt=>{
+      if(rt.rule==='everyDay'){
+        if(rt.text!=='ALLT ÄR OK'){ rt.text = 'ALLT ÄR OK'; recurringChanged = true; }
+        if(!rt.pinned){ rt.pinned = true; recurringChanged = true; }
+      }
+      if(rt.rule==='mondayBefore25' && rt.text!=='OBS! LÖNEFIX!!!'){
+        rt.text = 'OBS! LÖNEFIX!!!';
+        recurringChanged = true;
+      }
+    });
+
+    // 6. Dagsuppgifter för månaden
+    state.daytasks = dData || {};
+    // städa bort dubblettregler för de fasta påminnelserna
+    {
+      const OFFICIAL_RULE_CHECK = {
+        'REDOV. JOBB AF': rt => rt.day===10 && !rt.rule,
+        'BETALA RÄKNINGAR': rt => rt.day===29 && !rt.rule,
+        'OBS! LÖNEFIX!!!': rt => rt.rule==='mondayBefore25',
+        'BOENDESTÖD': rt => rt.rule==='everyFridayExceptHoliday',
+        'ALLT ÄR OK': rt => rt.rule==='everyDay'
+      };
+      const dupIds = [];
+      state.recurringTasks.forEach(rt=>{
+        const check = OFFICIAL_RULE_CHECK[rt.text];
+        if(check && !check(rt)){ dupIds.push(rt.id); }
+      });
+      if(dupIds.length>0){
+        dupIds.forEach(id=>sessionDeletedIds.add(id));
+        state.recurringTasks = state.recurringTasks.filter(rt=>!dupIds.includes(rt.id));
+        recurringChanged = true;
+        Object.keys(state.daytasks).forEach(dayKey=>{
+          const before = state.daytasks[dayKey].length;
+          state.daytasks[dayKey] = state.daytasks[dayKey].filter(t=>{
+            const keep = !(t.recurringId && dupIds.includes(t.recurringId));
+            if(!keep){ sessionDeletedIds.add(t.id); }
+            return keep;
+          });
+          if(state.daytasks[dayKey].length !== before){ daytasksChanged = true; }
+        });
+      }
+    }
+    // städa föräldralösa uppgifter vars regel inte längre finns
+    {
+      const validIds = new Set(state.recurringTasks.map(rt=>rt.id));
+      Object.keys(state.daytasks).forEach(dayKey=>{
+        const before = state.daytasks[dayKey].length;
+        state.daytasks[dayKey] = state.daytasks[dayKey].filter(t=>{
+          const keep = !t.recurringId || validIds.has(t.recurringId);
+          if(!keep){ sessionDeletedIds.add(t.id); }
+          return keep;
+        });
+        if(state.daytasks[dayKey].length !== before){ daytasksChanged = true; }
+      });
+    }
+    Object.keys(state.daytasks).forEach(dayKey=>{
+      (state.daytasks[dayKey]||[]).forEach(t=>{
+        if(t.text === 'REDOVISA JOBB'){ t.text = 'REDOV. JOBB AF'; daytasksChanged = true; }
+      });
+    });
+    // se till att varje återkommande uppgift finns med denna månad
+    state.recurringTasks.forEach(rt=>{
+      let dayNums;
+      if(rt.rule==='mondayBefore25'){ dayNums = [computeMondayBefore25(state.year, state.month)]; }
+      else if(rt.rule==='everyFridayExceptHoliday'){ dayNums = computeFridaysExcludingHolidays(state.year, state.month); }
+      else if(rt.rule==='everyDay'){ dayNums = computeAllDaysInMonth(state.year, state.month); }
+      else { dayNums = [rt.day]; }
+      const validDaySet = new Set(dayNums.map(String));
+      Object.keys(state.daytasks).forEach(dayKey=>{
+        if(!validDaySet.has(dayKey)){
+          const before = state.daytasks[dayKey].length;
+          state.daytasks[dayKey] = state.daytasks[dayKey].filter(t=>{
+            const keep = t.recurringId!==rt.id;
+            if(!keep){ sessionDeletedIds.add(t.id); }
+            return keep;
+          });
+          if(state.daytasks[dayKey].length !== before){ daytasksChanged = true; }
+        }
+      });
+      dayNums.forEach(dayNum=>{
+        const dayKey = String(dayNum);
+        state.daytasks[dayKey] = state.daytasks[dayKey] || [];
+        const existing = state.daytasks[dayKey].find(t=>t.recurringId===rt.id);
+        if(!existing){
+          const newTask = {id:uid(), text:rt.text, done:false, note:'', recurringId:rt.id};
+          if(rt.pinned){ newTask.pinned = true; state.daytasks[dayKey].unshift(newTask); }
+          else { state.daytasks[dayKey].push(newTask); }
+          daytasksChanged = true;
+        } else {
+          if(existing.text !== rt.text){ existing.text = rt.text; daytasksChanged = true; }
+          if(rt.pinned && !existing.pinned){ existing.pinned = true; daytasksChanged = true; }
+        }
+      });
+    });
+    // pinnade uppgifter alltid först i lagrad ordning
+    Object.keys(state.daytasks).forEach(dayKey=>{
+      const arr = state.daytasks[dayKey]||[];
+      if(arr.length>1){
+        const pinnedIdx = arr.findIndex(t=>t.pinned);
+        if(pinnedIdx>0){
+          const [pinnedTask] = arr.splice(pinnedIdx,1);
+          arr.unshift(pinnedTask);
+          daytasksChanged = true;
+        }
+      }
+    });
+    // synka namnändringar för regelinstanser
+    Object.keys(state.daytasks).forEach(dayKey=>{
+      (state.daytasks[dayKey]||[]).forEach(t=>{
+        if(t.recurringId){
+          const rt = state.recurringTasks.find(r=>r.id===t.recurringId);
+          if(rt && t.text !== rt.text){ t.text = rt.text; daytasksChanged = true; }
+        }
+      });
+    });
+
+    // 7. GAIS-matcher
+    state.gaisMatches = gmData || freshDefaultGaisMatches();
+    if(!gmData){ gaisChanged = true; }
+    state.gaisMatches.forEach(m=>{
+      const d = new Date(m.date+'T00:00:00');
+      if(d.getFullYear()===state.year && d.getMonth()===state.month){
+        const dayKey = String(d.getDate());
+        state.daytasks[dayKey] = state.daytasks[dayKey] || [];
+        const expectedText = '⚽ '+m.label+' ('+matchHomeAwaySuffix(m.label)+')';
+        const existing = state.daytasks[dayKey].find(t=>t.matchId===m.id);
+        if(!existing){
+          state.daytasks[dayKey].push({id:uid(), text:expectedText, done:false, note:m.note, matchId:m.id});
+          daytasksChanged = true;
+        } else if(existing.text !== expectedText){
+          existing.text = expectedText;
+          daytasksChanged = true;
+        }
+      }
+    });
+    Object.keys(state.daytasks).forEach(dayKey=>{
+      (state.daytasks[dayKey]||[]).forEach(t=>{
+        if(t.matchId){
+          const m = state.gaisMatches.find(x=>x.id===t.matchId);
+          if(m){
+            const expectedText = '⚽ '+m.label+' ('+matchHomeAwaySuffix(m.label)+')';
+            if(t.text !== expectedText){ t.text = expectedText; daytasksChanged = true; }
+          }
+        }
+      });
+    });
+
+    // 8. Golf, jobb, utbildning, anteckningar
+    state.golfRounds = gData || [];
+    state.jobData = jData || freshDefaultJobData();
+    if(!jData){ jobChanged = true; }
+    state.educations = eData || freshDefaultEducations();
+    if(!eData){ eduChanged = true; }
+    state.financeNotes = (fnData!==null && fnData!==undefined) ? fnData : '';
+
+    // ---- Visa direkt, spara i bakgrunden ----
+    state.loaded = true;
+    render();
+
+    // Om någon migrering/seed skett: skriv HELA databasen en (1) gång.
+    const anythingChanged = checklistChanged || templatesChanged || billsChanged ||
+      prevBillsChanged || recurringChanged || daytasksChanged || gaisChanged ||
+      jobChanged || eduChanged;
+    if(anythingChanged){
+      // uppdatera DB med ev. föregående månads lånändring innan vi sparar
+      if(prevBillsChanged && prevBills){ DB.bills[prevYm] = prevBills; }
+      DB.checklists[ym] = state.checklist;
+      DB.bills[ym] = state.bills;
+      DB.daytasks[ym] = state.daytasks;
+      DB.recurringTasks = state.recurringTasks;
+      DB.gaisMatches = state.gaisMatches;
+      DB.golfRounds = state.golfRounds;
+      DB.jobData = state.jobData;
+      DB.educations = state.educations;
+      DB.financeNotes = state.financeNotes;
+      DB.fixedTemplates = state.fixedTemplates;
+      enqueueSave(DB_KEY, JSON.stringify(DB), true);
+    }
+  }
+
+  // ============================================================
+  //  EN-NYCKEL-LAGRING (app-data-v1)
+  //  All data ligger i ETT objekt i EN nyckel. En sparning = en skrivning,
+  //  istället för 8–9 separata nycklar (vilket tidigare slog i rate limit).
+  // ============================================================
+  const DB_KEY = 'app-data-v1';
+
+  function emptyDB(){
+    return {
+      checklists: {},   // ym -> [ {id,text,done} ]
+      bills: {},        // ym -> {income,fixed,variable,loans}
+      daytasks: {},     // ym -> { dayNum: [tasks] }
+      recurringTasks: null,
+      gaisMatches: null,
+      golfRounds: null,
+      jobData: null,
+      educations: null,
+      financeNotes: '',
+      fixedTemplates: null,
+      pin: null
+    };
+  }
+
+  // ==== SKYDD MOT DATAFÖRLUST ====
+  // Om den första inläsningen misslyckas vet vi INTE vad som redan finns sparat.
+  // Då spärrar vi ALL sparning den här sessionen, så att vi aldrig råkar skriva
+  // tomma standardvärden ovanpå riktig data. Hellre "kunde inte ladda" än dataförlust.
+  let loadFailed = false;
+  let dbEverLoaded = false;
+
+  // Läser hela databasen från Supabase (en enda läsning).
+  // Kastar vidare om läsningen misslyckas – så loadMonth kan spärra sparning.
+  async function loadDB(){
+    const db = await storageGetSafe(DB_KEY); // kan kasta vid läsfel
+    if(db){ return normalizeDB(db); }
+    // null = nyckeln finns genuint inte (första gången) → tom databas är korrekt
+    return emptyDB();
+  }
+
+  function normalizeDB(db){
+    const e = emptyDB();
+    db.checklists = db.checklists || e.checklists;
+    db.bills = db.bills || e.bills;
+    db.daytasks = db.daytasks || e.daytasks;
+    if(db.financeNotes===undefined) db.financeNotes = '';
+    return db;
+  }
+
+  // Håller en referens till senast lästa DB i minnet
+  let DB = emptyDB();
+
+  // Skriver ihop aktuell state till DB-objektet och köar en (1) sparning.
+  // Läser först om DB för att slå ihop andras samtidiga ändringar (post-nivå).
+  let saveAllPending = false;
+  async function saveAll(){
+    // SKYDD 1: spara aldrig om första inläsningen misslyckades eller inte hunnit ske.
+    // Då vet vi inte vad som redan finns, och risken är att vi skriver över riktig data.
+    if(loadFailed || !dbEverLoaded){
+      console.error('Sparning spärrad: databasen är inte säkert inläst.');
+      showSaveError();
+      return;
+    }
+    const ym = ymKey(state.year, state.month);
+    // slå ihop med senaste lagrade versionen så samtidiga användares tillägg bevaras.
+    // Om läsningen misslyckas: spara INTE (annars kan vi skriva över nyare data).
+    let remote;
+    try{
+      remote = await storageGetSafe(DB_KEY);
+    }catch(e){
+      console.error('Kunde inte läsa inför sparning – hoppar över för att skydda data:', e);
+      showSaveError();
+      return;
+    }
+    if(remote){
+      const rn = normalizeDB(remote);
+      // checklists för denna månad
+      if(rn.checklists[ym]){ state.checklist = mergeById(state.checklist, rn.checklists[ym]); }
+      // bills för denna månad
+      if(rn.bills[ym]){
+        ['income','fixed','variable','loans'].forEach(kind=>{
+          state.bills[kind] = mergeById(state.bills[kind], rn.bills[ym][kind]);
+        });
+      }
+      // daytasks för denna månad
+      if(rn.daytasks[ym]){
+        const allDays = new Set([...Object.keys(rn.daytasks[ym]), ...Object.keys(state.daytasks)]);
+        allDays.forEach(dk=>{
+          state.daytasks[dk] = dedupeDayArr(mergeById(state.daytasks[dk], rn.daytasks[ym][dk]));
+        });
+      }
+      // globala listor
+      if(rn.recurringTasks){ state.recurringTasks = mergeById(state.recurringTasks, rn.recurringTasks); }
+      if(rn.gaisMatches){ state.gaisMatches = mergeById(state.gaisMatches, rn.gaisMatches); }
+      if(rn.golfRounds){ state.golfRounds = mergeById(state.golfRounds, rn.golfRounds); }
+      if(rn.educations){ state.educations = mergeById(state.educations, rn.educations); }
+      if(rn.fixedTemplates){ state.fixedTemplates = mergeById(state.fixedTemplates, rn.fixedTemplates); }
+      if(rn.jobData){
+        ['agreements','applications','meetings'].forEach(sec=>{
+          state.jobData[sec] = mergeById(state.jobData[sec], rn.jobData[sec]);
+        });
+      }
+      // behåll andra månaders data som redan finns i DB
+      DB = rn;
+    }
+    // skriv in aktuell state i DB
+    DB.checklists[ym] = state.checklist;
+    DB.bills[ym] = state.bills;
+    DB.daytasks[ym] = state.daytasks;
+    DB.recurringTasks = state.recurringTasks;
+    DB.gaisMatches = state.gaisMatches;
+    DB.golfRounds = state.golfRounds;
+    DB.jobData = state.jobData;
+    DB.educations = state.educations;
+    DB.financeNotes = state.financeNotes;
+    DB.fixedTemplates = state.fixedTemplates;
+    enqueueSave(DB_KEY, JSON.stringify(DB), false);
+  }
+
+  // Alla gamla save*-anrop pekar nu på saveAll (bakåtkompatibelt)
+  async function saveChecklist(){ await saveAll(); }
+  async function saveBills(){ await saveAll(); }
+  async function saveDaytasks(){ await saveAll(); }
+  async function saveRecurring(){ await saveAll(); }
+  async function saveGolf(){ await saveAll(); }
+  async function saveGaisMatches(){ await saveAll(); }
+  async function saveJobData(){ await saveAll(); }
+  async function saveEducations(){ await saveAll(); }
+  async function saveFinanceNotes(){ await saveAll(); }
+  async function saveFixedTemplates(){ await saveAll(); }
+
+  function golfDiffCell(score, par){
+    score = Number(score); par = Number(par);
+    if(!score || !par) return '<span style="color:var(--text-dim);">–</span>';
+    const diff = score - par;
+    if(diff===0) return '<span class="ek-golf-diff-even">E</span>';
+    if(diff>0) return '<span class="ek-golf-diff-pos">+'+diff+'</span>';
+    return '<span class="ek-golf-diff-neg">'+diff+'</span>';
+  }
+  function golfScramblePct(opp, made){
+    opp = Number(opp); made = Number(made);
+    if(!opp) return null;
+    return Math.round((made/opp)*100);
+  }
+  function computeGolfBests(rounds){
+    let bestScore=null, longestDrive=null, bestGir=null, bestPutts=null, bestScramblePct=null;
+    (rounds||[]).forEach(r=>{
+      const score = Number(r.score);
+      if(score>0 && (bestScore===null || score<bestScore)) bestScore = score;
+      const ld = Number(r.longestDrive);
+      if(ld>0 && (longestDrive===null || ld>longestDrive)) longestDrive = ld;
+      const gir = Number(r.gir);
+      if(r.gir!=='' && r.gir!=null && (bestGir===null || gir>bestGir)) bestGir = gir;
+      const putts = Number(r.putts);
+      if(putts>0 && (bestPutts===null || putts<bestPutts)) bestPutts = putts;
+      const pct = golfScramblePct(r.scrambleOpp, r.scrambleMade);
+      if(pct!==null && (bestScramblePct===null || pct>bestScramblePct)) bestScramblePct = pct;
+    });
+    return {bestScore, longestDrive, bestGir, bestPutts, bestScramblePct};
+  }
+
+  function celebrateRecord(message){
+    const toast = document.createElement('div');
+    toast.className = 'ek-record-toast';
+    toast.textContent = '🏆 ' + message;
+    document.body.appendChild(toast);
+    const colors = ['#0f5c34','#14171a','#ffffff','#c98a1c'];
+    for(let i=0;i<28;i++){
+      const p = document.createElement('div');
+      p.className = 'ek-confetti-piece';
+      p.style.left = Math.random()*100+'vw';
+      p.style.background = colors[Math.floor(Math.random()*colors.length)];
+      p.style.animationDuration = (2+Math.random()*1.5)+'s';
+      p.style.animationDelay = (Math.random()*0.4)+'s';
+      const size = (6+Math.random()*6)+'px';
+      p.style.width = size; p.style.height = size;
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(), 4200);
+    }
+    setTimeout(()=>toast.remove(), 3400);
+  }
+
+  function renderGolfFold(){
+    const rounds = state.golfRounds||[];
+    const withScore = rounds.filter(r=>Number(r.score)>0);
+    const withPutts = rounds.filter(r=>Number(r.putts)>0);
+    const withGir = rounds.filter(r=>r.gir!=='' && r.gir!=null);
+    let bestRound = null;
+    withScore.forEach(r=>{ if(!bestRound || Number(r.score)<Number(bestRound.score)) bestRound = r; });
+    let bestPuttsRound = null;
+    withPutts.forEach(r=>{ if(!bestPuttsRound || Number(r.putts)<Number(bestPuttsRound.putts)) bestPuttsRound = r; });
+    let bestGirRound = null;
+    withGir.forEach(r=>{ if(!bestGirRound || Number(r.gir)>Number(bestGirRound.gir)) bestGirRound = r; });
+    let bestDriveRound = null;
+    rounds.forEach(r=>{ const ld=Number(r.longestDrive); if(ld>0 && (!bestDriveRound || ld>Number(bestDriveRound.longestDrive))) bestDriveRound = r; });
+    let bestScrambleRound = null;
+    rounds.forEach(r=>{ const pct=golfScramblePct(r.scrambleOpp,r.scrambleMade); if(pct!==null && (!bestScrambleRound || pct>golfScramblePct(bestScrambleRound.scrambleOpp,bestScrambleRound.scrambleMade))) bestScrambleRound = r; });
+    const avgScore = withScore.length ? (withScore.reduce((s,r)=>s+Number(r.score),0)/withScore.length) : null;
+
+    let h = '<div class="ek-fold'+(state.golfOpen?' open':'')+'">';
+    h += '<div class="ek-foldhead" data-act="toggle-golf-fold">';
+    h += '<span class="ek-foldtitle">⛳ GOLFEN</span>';
+    h += '<span class="ek-chev">▾</span>';
+    h += '</div>';
+    h += '<div class="ek-foldbody"><div class="ek-foldinner">';
+    h += '<p class="ek-golf-intro">Ingemars rond-logg. Fyll i efter varje runda så räknar den ut highlights automatiskt – slår du ett personbästa smäller det till! 🎉</p>';
+
+    h += '<div class="ek-golf-highlights">';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Antal rundor</span><span class="ek-gc-value">'+rounds.length+'</span></div>';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Bästa score</span><span class="ek-gc-value">'+(bestRound?bestRound.score:'–')+'</span><span class="ek-gc-sub">'+(bestRound?escapeHtml(bestRound.course||''):'')+'</span></div>';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Snittscore</span><span class="ek-gc-value">'+(avgScore?avgScore.toFixed(1):'–')+'</span></div>';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Flest GIR</span><span class="ek-gc-value">'+(bestGirRound?bestGirRound.gir+'/18':'–')+'</span><span class="ek-gc-sub">'+(bestGirRound?escapeHtml(bestGirRound.course||''):'')+'</span></div>';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Färst puttar</span><span class="ek-gc-value">'+(bestPuttsRound?bestPuttsRound.putts:'–')+'</span><span class="ek-gc-sub">'+(bestPuttsRound?escapeHtml(bestPuttsRound.course||''):'')+'</span></div>';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Bästa scrambling</span><span class="ek-gc-value">'+(bestScrambleRound?golfScramblePct(bestScrambleRound.scrambleOpp,bestScrambleRound.scrambleMade)+'%':'–')+'</span><span class="ek-gc-sub">'+(bestScrambleRound?escapeHtml(bestScrambleRound.course||''):'')+'</span></div>';
+    h += '<div class="ek-golf-card"><span class="ek-gc-label">Längsta drive</span><span class="ek-gc-value">'+(bestDriveRound?bestDriveRound.longestDrive+' m':'–')+'</span><span class="ek-gc-sub">'+(bestDriveRound?escapeHtml(bestDriveRound.course||''):'')+'</span></div>';
+    h += '</div>';
+
+    h += '<div class="ek-golf-scroll"><table class="ek-golf-table ek-table"><thead><tr>';
+    h += '<th>Datum</th><th>Bana</th><th>Score</th><th>Par</th><th>+/-</th><th>Fairways</th><th>GIR</th><th>Puttar</th><th>3-puttar</th><th>Upp&amp;ner (lyckade/försök)</th><th>Scr%</th><th>Längsta drive (m)</th><th class="ek-golf-note">Kommentar</th><th></th>';
+    h += '</tr></thead><tbody>';
+    if(rounds.length===0){
+      h += '<tr><td colspan="14" style="color:var(--text-dim);font-style:italic;">Inga rundor inlagda ännu – lägg till din första nedan!</td></tr>';
+    }
+    rounds.forEach(r=>{
+      const pct = golfScramblePct(r.scrambleOpp, r.scrambleMade);
+      h += '<tr>';
+      h += '<td><input type="date" class="ek-tcell-input" data-act="golf-field" data-field="date" data-id="'+r.id+'" value="'+escapeAttr(r.date||'')+'"/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:100px;" data-act="golf-field" data-field="course" data-id="'+r.id+'" value="'+escapeAttr(r.course||'')+'" placeholder="Bana"/></td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="score" data-id="'+r.id+'" value="'+escapeAttr(r.score||'')+'" placeholder="–"/></td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="par" data-id="'+r.id+'" value="'+escapeAttr(r.par||'')+'" placeholder="72"/></td>';
+      h += '<td class="ek-golf-narrow">'+golfDiffCell(r.score,r.par)+'</td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="fairways" data-id="'+r.id+'" value="'+escapeAttr(r.fairways||'')+'" placeholder="/14"/></td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="gir" data-id="'+r.id+'" value="'+escapeAttr(r.gir||'')+'" placeholder="/18"/></td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="putts" data-id="'+r.id+'" value="'+escapeAttr(r.putts||'')+'" placeholder="–"/></td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="threePutts" data-id="'+r.id+'" value="'+escapeAttr(r.threePutts||'')+'" placeholder="–"/></td>';
+      h += '<td style="white-space:nowrap;"><input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="scrambleMade" data-id="'+r.id+'" value="'+escapeAttr(r.scrambleMade||'')+'" placeholder="0"/> / <input class="ek-tcell-input ek-golf-narrow" data-act="golf-field" data-field="scrambleOpp" data-id="'+r.id+'" value="'+escapeAttr(r.scrambleOpp||'')+'" placeholder="0"/></td>';
+      h += '<td class="ek-golf-narrow">'+(pct!==null?pct+'%':'<span style="color:var(--text-dim);">–</span>')+'</td>';
+      h += '<td><input class="ek-tcell-input ek-golf-narrow" style="width:56px;" data-act="golf-field" data-field="longestDrive" data-id="'+r.id+'" value="'+escapeAttr(r.longestDrive||'')+'" placeholder="–"/></td>';
+      h += '<td class="ek-golf-note"><input class="ek-tcell-input" data-act="golf-field" data-field="note" data-id="'+r.id+'" value="'+escapeAttr(r.note||'')+'" placeholder="Väder, kompisar, bästa slaget..."/></td>';
+      h += '<td><button class="ek-rowdel" data-act="golf-del" data-id="'+r.id+'">✕</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<div class="ek-addrow-mini"><button data-act="golf-add">+ Lägg till runda</button></div>';
+
+    h += '</div></div></div>';
+    return h;
+  }
+
+  function renderJobFold(){
+    const jd = state.jobData || freshDefaultJobData();
+    const agreements = jd.agreements||[];
+    const applications = jd.applications||[];
+    const meetings = jd.meetings||[];
+
+    let h = '<div class="ek-fold'+(state.jobOpen?' open':'')+'">';
+    h += '<div class="ek-foldhead" data-act="toggle-job-fold">';
+    h += '<span class="ek-foldtitle">💼 NYTT JOBB</span>';
+    h += '<span class="ek-chev">▾</span>';
+    h += '</div>';
+    h += '<div class="ek-foldbody"><div class="ek-foldinner">';
+    h += '<p class="ek-golf-intro">Koll på jobbsökandet – överenskommelser med Arbetsförmedlingen, ansökningar och möten samlat på ett ställe.</p>';
+
+    // 1. Överenskommelser med AF
+    h += '<div class="ek-job-block">';
+    h += '<div class="ek-job-subtitle">🤝 Överenskommelser med AF – vilken hjälp Ingemar ska få</div>';
+    h += '<div class="ek-tablewrap"><table class="ek-table"><thead><tr><th>Insats / hjälp</th><th>Start</th><th>Slut</th><th style="text-align:center;">Klar</th><th></th></tr></thead><tbody>';
+    if(agreements.length===0){
+      h += '<tr><td colspan="5" style="color:var(--text-dim);font-style:italic;">Inga överenskommelser inlagda ännu</td></tr>';
+    }
+    agreements.forEach(r=>{
+      h += '<tr>';
+      h += '<td><input class="ek-tcell-input" style="min-width:140px;" data-act="job-field" data-section="agreements" data-field="insats" data-id="'+r.id+'" value="'+escapeAttr(r.insats||'')+'" placeholder="T.ex. CV-hjälp, jobbcoachning..."/></td>';
+      h += '<td><input type="date" class="ek-tcell-input" data-act="job-field" data-section="agreements" data-field="start" data-id="'+r.id+'" value="'+escapeAttr(r.start||'')+'"/></td>';
+      h += '<td><input type="date" class="ek-tcell-input" data-act="job-field" data-section="agreements" data-field="slut" data-id="'+r.id+'" value="'+escapeAttr(r.slut||'')+'"/></td>';
+      h += '<td style="text-align:center;"><span class="ek-paidbox'+(r.done?' paid':'')+'" data-act="job-check" data-section="agreements" data-id="'+r.id+'">'+(r.done?'✓':'')+'</span></td>';
+      h += '<td><button class="ek-rowdel" data-act="job-del" data-section="agreements" data-id="'+r.id+'">✕</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<div class="ek-addrow-mini"><button data-act="job-add" data-section="agreements">+ Lägg till överenskommelse</button></div>';
+    h += '</div>';
+
+    // 2. Sökta jobb
+    h += '<div class="ek-job-block">';
+    h += '<div class="ek-job-subtitle">📝 Sökta jobb</div>';
+    h += '<div class="ek-golf-scroll"><table class="ek-table" style="min-width:640px;"><thead><tr><th>Datum</th><th>Företag</th><th>Tjänst</th><th>Status</th><th>Kommentar</th><th></th></tr></thead><tbody>';
+    if(applications.length===0){
+      h += '<tr><td colspan="6" style="color:var(--text-dim);font-style:italic;">Inga jobb inlagda ännu</td></tr>';
+    }
+    applications.forEach(r=>{
+      h += '<tr>';
+      h += '<td><input type="date" class="ek-tcell-input" data-act="job-field" data-section="applications" data-field="date" data-id="'+r.id+'" value="'+escapeAttr(r.date||'')+'"/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:110px;" data-act="job-field" data-section="applications" data-field="company" data-id="'+r.id+'" value="'+escapeAttr(r.company||'')+'" placeholder="Företag"/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:110px;" data-act="job-field" data-section="applications" data-field="role" data-id="'+r.id+'" value="'+escapeAttr(r.role||'')+'" placeholder="Tjänst"/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:120px;" data-act="job-field" data-section="applications" data-field="status" data-id="'+r.id+'" value="'+escapeAttr(r.status||'')+'" placeholder="Sökt/Kallad/Avslag..."/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:140px;" data-act="job-field" data-section="applications" data-field="note" data-id="'+r.id+'" value="'+escapeAttr(r.note||'')+'" placeholder="Kommentar"/></td>';
+      h += '<td><button class="ek-rowdel" data-act="job-del" data-section="applications" data-id="'+r.id+'">✕</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<div class="ek-addrow-mini"><button data-act="job-add" data-section="applications">+ Lägg till sökt jobb</button></div>';
+    h += '</div>';
+
+    // 3. Möten med AF
+    h += '<div class="ek-job-block">';
+    h += '<div class="ek-job-subtitle">📅 Möten med AF</div>';
+    h += '<div class="ek-golf-scroll"><table class="ek-table" style="min-width:560px;"><thead><tr><th>Datum</th><th>Tid</th><th>Kontaktperson</th><th>Kommentar</th><th style="text-align:center;">Genomfört</th><th></th></tr></thead><tbody>';
+    if(meetings.length===0){
+      h += '<tr><td colspan="6" style="color:var(--text-dim);font-style:italic;">Inga möten inlagda ännu</td></tr>';
+    }
+    meetings.forEach(r=>{
+      h += '<tr>';
+      h += '<td><input type="date" class="ek-tcell-input" data-act="job-field" data-section="meetings" data-field="date" data-id="'+r.id+'" value="'+escapeAttr(r.date||'')+'"/></td>';
+      h += '<td><input class="ek-tcell-input" style="width:70px;" data-act="job-field" data-section="meetings" data-field="time" data-id="'+r.id+'" value="'+escapeAttr(r.time||'')+'" placeholder="tid"/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:110px;" data-act="job-field" data-section="meetings" data-field="contact" data-id="'+r.id+'" value="'+escapeAttr(r.contact||'')+'" placeholder="Namn/plats"/></td>';
+      h += '<td><input class="ek-tcell-input" style="min-width:140px;" data-act="job-field" data-section="meetings" data-field="note" data-id="'+r.id+'" value="'+escapeAttr(r.note||'')+'" placeholder="Kommentar"/></td>';
+      h += '<td style="text-align:center;"><span class="ek-paidbox'+(r.done?' paid':'')+'" data-act="job-check" data-section="meetings" data-id="'+r.id+'">'+(r.done?'✓':'')+'</span></td>';
+      h += '<td><button class="ek-rowdel" data-act="job-del" data-section="meetings" data-id="'+r.id+'">✕</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<div class="ek-addrow-mini"><button data-act="job-add" data-section="meetings">+ Lägg till möte</button></div>';
+    h += '</div>';
+
+    // 4. Önskad hjälp
+    h += '<div class="ek-job-block">';
+    h += '<div class="ek-job-subtitle">💭 Vilken hjälp Ingemar önskar med detta</div>';
+    h += '<textarea class="ek-job-textarea" id="ek-wishlist" placeholder="Skriv fritt här – t.ex. hjälp med CV, öva intervjuer, tips på lediga jobb, stöd med ansökningar...">'+escapeHtml(jd.wishList||'')+'</textarea>';
+    h += '</div>';
+
+    h += '</div></div></div>';
+    return h;
+  }
+
+  function eduField(edu, field, label, opts){
+    opts = opts || {};
+    const val = edu[field]||'';
+    if(opts.area){
+      return '<div class="ek-edu-field"><label>'+label+'</label><textarea class="ek-edu-input" data-act="edu-field" data-field="'+field+'" data-id="'+edu.id+'" placeholder="'+(opts.placeholder||'')+'">'+escapeHtml(val)+'</textarea></div>';
+    }
+    const type = opts.type||'text';
+    return '<div class="ek-edu-field"><label>'+label+'</label><input type="'+type+'" class="ek-edu-input" data-act="edu-field" data-field="'+field+'" data-id="'+edu.id+'" value="'+escapeAttr(val)+'" placeholder="'+(opts.placeholder||'')+'"/></div>';
+  }
+
+  function renderEduFold(){
+    const educations = state.educations||[];
+    let h = '<div class="ek-fold'+(state.eduOpen?' open':'')+'">';
+    h += '<div class="ek-foldhead" data-act="toggle-edu-fold">';
+    h += '<span class="ek-foldtitle">🎓 UTBILDNING</span>';
+    h += '<span class="ek-chev">▾</span>';
+    h += '</div>';
+    h += '<div class="ek-foldbody"><div class="ek-foldinner">';
+    h += '<p class="ek-golf-intro">Utbildningar Ingemar är intresserad av (GRvux). Fyll i, ändra eller lägg till fler efter hand.</p>';
+
+    if(educations.length===0){
+      h += '<p class="ek-empty">Inga utbildningar inlagda ännu.</p>';
+    }
+    educations.forEach(edu=>{
+      h += '<div class="ek-edu-card">';
+      h += '<div class="ek-edu-headrow">';
+      h += '<input class="ek-edu-title-input" data-act="edu-field" data-field="namn" data-id="'+edu.id+'" value="'+escapeAttr(edu.namn||'')+'" placeholder="Utbildningens namn"/>';
+      h += '<span class="ek-edu-fav-label">Intresserad</span>';
+      h += '<span class="ek-paidbox'+(edu.intresserad?' paid':'')+'" data-act="edu-check" data-id="'+edu.id+'">'+(edu.intresserad?'✓':'')+'</span>';
+      h += '<button class="ek-rowdel" data-act="edu-del" data-id="'+edu.id+'">✕</button>';
+      h += '</div>';
+      h += '<div class="ek-edu-grid">';
+      h += eduField(edu,'ort','Ort');
+      h += eduField(edu,'studieform','Studieform');
+      h += eduField(edu,'start','Start',{type:'date'});
+      h += eduField(edu,'omfattning','Omfattning');
+      h += eduField(edu,'sistaAnsokan','Sista ansökan',{placeholder:'Datum eller "Ej sökbar"'});
+      h += eduField(edu,'lank','Länk',{placeholder:'https://...'});
+      h += '</div>';
+      h += eduField(edu,'krav','Krav / förkunskaper',{area:true,placeholder:'Vad krävs för behörighet...'});
+      h += eduField(edu,'beskrivning','Beskrivning',{area:true,placeholder:'Vad går utbildningen ut på...'});
+      h += eduField(edu,'kommentar','Egen kommentar',{area:true,placeholder:'Tankar, prioritering, frågor...'});
+      h += '</div>';
+    });
+
+    h += '<div class="ek-addrow-mini"><button data-act="edu-add">+ Lägg till utbildning</button></div>';
+    h += '</div></div></div>';
+    return h;
+  }
+
+  function renderFinanceFold(){
+    let h = '<div class="ek-fold'+(state.financeOpen?' open':'')+'">';
+    h += '<div class="ek-foldhead" data-act="toggle-finance-fold">';
+    h += '<span class="ek-foldtitle">💰 EKONOMI UNDER UTBILDNING</span>';
+    h += '<span class="ek-chev">▾</span>';
+    h += '</div>';
+    h += '<div class="ek-foldbody"><div class="ek-foldinner">';
+    h += '<p class="ek-golf-intro">Kort översikt över hur ekonomin kan se ut om Ingemar börjar studera. Reglerna är individuella, så se det här som utgångspunkt inför samtal med CSN och Arbetsförmedlingen – inte som ett facit.</p>';
+
+    h += '<div class="ek-fin-card">';
+    h += '<div class="ek-fin-title">🎓 Studiemedel – grundnivå (CSN)</div>';
+    h += '<p>Fullt studiemedel vid heltidsstudier ligger på totalt cirka <b>13 592 kr per fyraveckorsperiod</b> (2026-belopp), varav ungefär <b>4 148 kr är bidrag</b> som inte behöver betalas tillbaka – resten är ett frivilligt lån man kan välja bort helt eller delvis.</p>';
+    h += '<p>Fribeloppet (hur mycket man får tjäna extra utan att studiemedlet påverkas) ligger på cirka <b>114 676 kr per halvår</b> vid heltidsstudier, ungefär 19 100 kr/månad.</p>';
+    h += '</div>';
+
+    h += '<div class="ek-fin-card">';
+    h += '<div class="ek-fin-title">📈 Högre bidrag – för arbetssökande eller den utan gymnasieexamen</div>';
+    h += '<p>Vid studier på grundskole- eller gymnasienivå (t.ex. komvux) kan CSN i vissa fall ge en <b>större bidragsdel och mindre lånedel</b> av samma totalbelopp – ungefär 9 116 kr bidrag + 4 476 kr lån per fyra veckor, i stället för det vanliga 4 148/9 444.</p>';
+    h += '<p>Detta kan gälla den som är inskriven hos Arbetsförmedlingen och saknar slutbetyg från grundskola eller gymnasium, eller är 25 år eller äldre och saknar en fullständig treårig gymnasieutbildning. CSN gör alltid en individuell bedömning i samband med den vanliga studiemedelsansökan – ingen separat ansökan behövs.</p>';
+    h += '</div>';
+
+    h += '<div class="ek-fin-card">';
+    h += '<div class="ek-fin-title">🤝 Aktivitetsstöd / utvecklingsersättning via Arbetsförmedlingen</div>';
+    h += '<p>Om Arbetsförmedlingen bedömer att Ingemar behöver studera för att komma närmare ett jobb kan han i vissa fall få <b>fortsatt aktivitetsstöd</b> under studietiden, om han deltar i jobb- och utvecklingsgarantin. Det gäller normalt studier på grundläggande eller gymnasial nivå i upp till ett år (i vissa fall längre), men går ibland även att bevilja för eftergymnasiala studier.</p>';
+    h += '<p>Det är alltid Arbetsförmedlingen som beslutar om och hur länge man kan behålla ersättningen under studier – bäst att stämma av med sin handläggare <b>innan</b> ansökan skickas in.</p>';
+    h += '</div>';
+
+    h += '<div class="ek-fin-card ek-fin-warn">';
+    h += '<div class="ek-fin-title">⚠️ Viktigt att tänka på</div>';
+    h += '<p>CSN-studiemedel och aktivitetsstöd kombineras normalt <b>inte</b> för samma studieperiod – man får antingen det ena eller det andra, beroende på om Arbetsförmedlingen godkänt studierna som en insats i handlingsplanen eller inte.</p>';
+    h += '<p>Beloppen och villkoren ovan är en förenklad bild och kan ändras. Dubbelkolla alltid aktuella belopp på <a href="https://www.csn.se" target="_blank" rel="noopener">csn.se</a> och stäm av personligt med handläggaren på <a href="https://arbetsformedlingen.se" target="_blank" rel="noopener">arbetsformedlingen.se</a> innan ni planerar utifrån detta.</p>';
+    h += '</div>';
+
+    h += '<div style="margin-top:14px;">';
+    h += '<div class="ek-job-subtitle">📝 Anteckningar & frågor att ta upp med AF/CSN</div>';
+    h += '<textarea class="ek-job-textarea" id="ek-finance-notes" placeholder="T.ex. frågor till nästa möte, vad handläggaren sagt, vilket alternativ som verkar bäst...">'+escapeHtml(state.financeNotes||'')+'</textarea>';
+    h += '</div>';
+
+    h += '</div></div></div>';
+    return h;
+  }
+
+  function fmtAmount(n){
+    n = Number(n)||0;
+    return n.toLocaleString('sv-SE',{maximumFractionDigits:0}) + ' kr';
+  }
+
+  function daysInMonth(y,m){ return new Date(y, m+1, 0).getDate(); }
+  function firstWeekdayIndex(y,m){
+    // JS: 0=Sun..6=Sat -> convert to Mon=0..Sun=6
+    const d = new Date(y,m,1).getDay();
+    return (d+6)%7;
+  }
+
+  function renderBall(){
+    return '<svg class="ek-ball" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">'+
+      '<circle cx="12" cy="12" r="10" fill="#ffffff"/>'+
+      '<circle cx="12" cy="12" r="10" stroke="#0f5c34" stroke-width="1.4"/>'+
+      '<path d="M12 6.5l3.2 2.3-1.2 3.7h-4l-1.2-3.7L12 6.5z" fill="#0f5c34"/>'+
+      '</svg>';
+  }
+
+  function render(){
+    const ym = ymKey(state.year, state.month);
+    const totalIncome = (state.bills.income||[]).reduce((s,r)=>s+(Number(r.amount)||0),0);
+    const totalFixed = (state.bills.fixed||[]).reduce((s,r)=>s+(Number(r.amount)||0),0);
+    const totalVar = (state.bills.variable||[]).reduce((s,r)=>s+(Number(r.amount)||0),0);
+    const totalSkulder = totalFixed+totalVar;
+    const kvar = totalIncome - totalSkulder;
+
+    let html = '';
+    html += '<div class="ek-header">';
+    html += '<h1 class="ek-title">'+renderBall()+' Koll på läget KALENDER</h1>';
+    html += '<p class="ek-sub">Ingemars familjekalender</p>';
+    html += '</div>';
+
+    html += '<div class="ek-nav">';
+    html += '<button class="ek-navbtn" data-act="prevmonth">‹</button>';
+    html += '<div style="text-align:center;">';
+    html += '<div class="ek-monthlabel">'+MONTHNAMES[state.month]+' '+state.year+'</div>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:8px;align-items:center;">';
+    html += '<button class="ek-todaybtn" data-act="goto-today">Idag</button>';
+    html += '<button class="ek-navbtn" data-act="nextmonth">›</button>';
+    html += '</div>';
+    html += '</div>';
+
+    // Calendar
+    html += '<div class="ek-cal">';
+    html += '<div class="ek-weekdays">'+WEEKDAYS.map(w=>'<span>'+w+'</span>').join('')+'</div>';
+    html += '<div class="ek-grid">';
+    const firstIdx = firstWeekdayIndex(state.year, state.month);
+    const totalDays = daysInMonth(state.year, state.month);
+    for(let i=0;i<firstIdx;i++){ html += '<div class="ek-day empty"></div>'; }
+    const nowSnapshot = getNow();
+    const isCurrentRealMonth = (state.year===nowSnapshot.getFullYear() && state.month===nowSnapshot.getMonth());
+    for(let d=1; d<=totalDays; d++){
+      const isToday = isCurrentRealMonth && d===nowSnapshot.getDate();
+      const tasks = sortDayTasks(state.daytasks[d] || []);
+      const actionableTasks = tasks.filter(t=>!t.matchId && !t.pinned);
+      const hasActionable = actionableTasks.length>0;
+      const allDone = hasActionable && actionableTasks.every(t=>t.done);
+      const isSpecialDay = tasks.some(t=>SPECIAL_TEXTS.includes(t.text));
+      let cls = 'ek-day'+(isToday?' today':'');
+      if(allDone){ cls += ' ek-daydone'; }
+      else if(isSpecialDay){ cls += ' has-special'; }
+      else if(hasActionable){ cls += ' has-tasks'; }
+      html += '<div class="'+cls+'" data-act="openday" data-day="'+d+'">';
+      html += '<span class="ek-daynum">'+d+'</span>';
+      if(tasks.length>0){
+        const maxShow = 6;
+        const shown = tasks.slice(0, maxShow);
+        html += '<div class="ek-daytasks">';
+        shown.forEach(t=>{
+          if(t.matchId){
+            html += '<span class="ek-daylabel ek-daylabel-match">'+escapeHtml(t.text)+'</span>';
+          } else {
+            html += '<span class="ek-daylabel"><span class="ek-minicheck'+(t.done?' done':'')+'">'+(t.done?'✓':'')+'</span>'+escapeHtml(t.text)+'</span>';
+          }
+        });
+        html += '</div>';
+        if(tasks.length>maxShow){ html += '<span class="ek-daybadge">+'+(tasks.length-maxShow)+'</span>'; }
+      }
+      html += '</div>';
+    }
+    html += '</div></div>';
+
+    // Checklist section
+    html += '<div class="ek-section">';
+    html += '<div class="ek-sectitle"><span>Påminnelser – '+MONTHNAMES[state.month]+'</span></div>';
+    html += '<div class="ek-body">';
+    html += '<ul class="ek-checklist">';
+    if(state.checklist.length===0){
+      html += '<li class="ek-empty">Inga påminnelser ännu.</li>';
+    }
+    state.checklist.forEach(item=>{
+      const guarded = isProtectedText(item.text);
+      html += '<li class="ek-checkitem'+(item.done?' done':'')+'">';
+      html += '<div class="ek-checkrow">';
+      html += '<span class="ek-checkbox" data-act="toggle-check" data-id="'+item.id+'">'+(item.done?'✓':'')+'</span>';
+      html += '<span class="ek-checktext">'+escapeHtml(item.text)+'</span>';
+      html += '<button class="ek-delbtn" data-act="del-check" data-id="'+item.id+'">'+(guarded?'🔒':'✕')+'</button>';
+      html += '</div></li>';
+    });
+    html += '</ul>';
+    html += '<div class="ek-addrow">';
+    html += '<input class="ek-input" id="ek-new-check" placeholder="Lägg till påminnelse, t.ex. TVÄTTA..." />';
+    html += '<button class="ek-addbtn" data-act="add-check">Lägg till</button>';
+    html += '</div>';
+    html += '</div></div>';
+
+    // Bills fold
+    html += '<div class="ek-fold'+(state.billsOpen?' open':'')+'">';
+    html += '<div class="ek-foldhead" data-act="toggle-fold">';
+    html += '<span class="ek-foldtitle">💰 MÅNADENS RÄKNINGAR</span>';
+    html += '<span class="ek-chev">▾</span>';
+    html += '</div>';
+    html += '<div class="ek-foldbody"><div class="ek-foldinner">';
+
+    html += billsTableHtml('income','Inkomster', state.bills.income||[], 'income');
+    html += '<div style="height:14px;"></div>';
+    html += billsTableHtml('fixed','Utgifter – fasta räkningar', state.bills.fixed||[], 'expense');
+    html += '<div style="height:14px;"></div>';
+    html += billsTableHtml('variable','Extra denna månad', state.bills.variable||[], 'expense');
+
+    html += '<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-weight:700;font-size:13px;color:var(--text-dim);">';
+    html += '<span>Summa inkomster</span><span style="color:var(--gais-green-dark);font-weight:800;">'+fmtAmount(totalIncome)+'</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-weight:700;font-size:13px;color:var(--text-dim);">';
+    html += '<span>Utgifter</span><span style="color:var(--red);font-weight:800;">−'+fmtAmount(totalSkulder)+'</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;background:var(--gais-black);color:#fff;padding:11px 14px;border-radius:10px;font-weight:800;font-size:14px;">';
+    html += '<span>Kvar när allt är betalt</span><span>'+(kvar<0?'−':'')+fmtAmount(Math.abs(kvar))+'</span>';
+    html += '</div></div>';
+
+    html += '<div style="height:18px;"></div>';
+    html += '<p style="font-size:11.5px;color:var(--text-dim);margin:0 0 6px;">Räknas inte in i summorna ovan. Obetalda lån vid månadens slut förs automatiskt över till nästa månad (märks med ↩).</p>';
+    html += billsTableHtml('loans','🔄 Tillfälliga lån', state.bills.loans||[], 'expense', {showDue:false});
+
+    html += '</div></div></div>';
+
+    // Golf-flik
+    html += renderGolfFold();
+
+    // Nytt jobb-flik
+    html += renderJobFold();
+
+    // Utbildning-flik
+    html += renderEduFold();
+
+    // Ekonomi under utbildning-flik
+    html += renderFinanceFold();
+
+    html += '<div class="ek-footer-note">Allt sparas automatiskt och delas mellan er som har länken 🔗</div>';
+
+    root.innerHTML = state.loaded ? html : html; // keep structure even while (re)loading
+    attachEvents();
+  }
+
+  function billsTableHtml(kind, title, rows, sign, opts){
+    sign = sign || 'expense';
+    opts = opts || {};
+    const paidLabel = sign==='income' ? 'Inkommen' : 'Betald';
+    const groupColor = sign==='income' ? 'var(--gais-green)' : 'var(--gais-black)';
+    const showDue = opts.showDue!==undefined ? opts.showDue : sign!=='income';
+    let h = '<div class="ek-tablewrap">';
+    h += '<div class="ek-tab-group-title" style="background:'+groupColor+';">'+title+'</div>';
+    h += '<table class="ek-table"><thead><tr><th>Namn</th><th style="text-align:right;">Belopp</th>'+(showDue?'<th>Sista betaldatum</th>':'')+'<th style="text-align:center;">'+paidLabel+'</th><th></th></tr></thead><tbody>';
+    if(rows.length===0){
+      h += '<tr><td colspan="'+(showDue?5:4)+'" style="color:var(--text-dim);font-style:italic;">Inga poster ännu</td></tr>';
+    }
+    rows.forEach(r=>{
+      const amtColor = sign==='income' ? 'var(--gais-green-dark)' : 'var(--red)';
+      h += '<tr>';
+      h += '<td><input class="ek-tcell-input" data-act="bill-name" data-kind="'+kind+'" data-id="'+r.id+'" value="'+escapeAttr(r.name)+'" placeholder="Namn"/></td>';
+      h += '<td style="text-align:right;"><input class="ek-tcell-input ek-amount-input" style="color:'+amtColor+';font-weight:800;" data-act="bill-amount" data-kind="'+kind+'" data-id="'+r.id+'" value="'+escapeAttr(r.amount||'')+'" placeholder="0"/> kr</td>';
+      if(showDue){
+        h += '<td><input type="date" class="ek-tcell-input" data-act="bill-duedate" data-kind="'+kind+'" data-id="'+r.id+'" value="'+escapeAttr(r.dueDate||'')+'"/></td>';
+      }
+      h += '<td style="text-align:center;"><span class="ek-paidbox'+(r.paid?' paid':'')+'" data-act="bill-paid" data-kind="'+kind+'" data-id="'+r.id+'">'+(r.paid?'✓':'')+'</span></td>';
+      h += '<td style="text-align:center;white-space:nowrap;">';
+      if(kind==='fixed'){
+        h += '<button class="ek-rowdel" title="Ändra standardbelopp (kräver PIN-kod)" data-act="bill-baseline" data-id="'+r.id+'">🔒</button> ';
+      }
+      h += '<button class="ek-rowdel" data-act="bill-del" data-kind="'+kind+'" data-id="'+r.id+'">✕</button></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    h += '<div class="ek-addrow-mini"><button data-act="bill-add" data-kind="'+kind+'">+ Lägg till rad</button></div>';
+    h += '</div>';
+    return h;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function escapeAttr(s){ return escapeHtml(s||''); }
+
+  function attachEvents(){
+    const DEDICATED_FIELD_ACTS = ['bill-name','bill-amount','bill-duedate','golf-field','job-field','edu-field'];
+    root.querySelectorAll('[data-act]').forEach(el=>{
+      const act = el.getAttribute('data-act');
+      if(DEDICATED_FIELD_ACTS.includes(act)) return; // dessa binds separat längre ner, rör inte _bound här
+      if(el._bound) return;
+      el._bound = true;
+      if(act==='prevmonth'){
+        el.onclick = ()=>{ changeMonth(-1); };
+      } else if(act==='nextmonth'){
+        el.onclick = ()=>{ changeMonth(1); };
+      } else if(act==='goto-today'){
+        el.onclick = ()=>{ const n=getNow(); state.year=n.getFullYear(); state.month=n.getMonth(); loadMonth(); };
+      } else if(act==='openday'){
+        el.onclick = ()=>{ state.openDay = parseInt(el.getAttribute('data-day')); renderModal(); };
+      } else if(act==='toggle-check'){
+        el.onclick = async ()=>{
+          const id = el.getAttribute('data-id');
+          const item = state.checklist.find(i=>i.id===id);
+          if(item){ item.done = !item.done; render(); await saveChecklist(); }
+        };
+      } else if(act==='del-check'){
+        el.onclick = async ()=>{
+          const id = el.getAttribute('data-id');
+          const item = state.checklist.find(i=>i.id===id);
+          if(!item) return;
+          const doDelete = async ()=>{
+            sessionDeletedIds.add(id);
+            state.checklist = state.checklist.filter(i=>i.id!==id);
+            render(); await saveChecklist();
+          };
+          if(isProtectedText(item.text)){
+            guardedDelete(doDelete);
+          } else {
+            await doDelete();
+          }
+        };
+      } else if(act==='add-check'){
+        el.onclick = async ()=>{
+          const inp = document.getElementById('ek-new-check');
+          const val = inp.value.trim();
+          if(!val) return;
+          state.checklist.push({id:uid(), text:val.toUpperCase(), done:false});
+          render(); await saveChecklist();
+        };
+      } else if(act==='toggle-fold'){
+        el.onclick = ()=>{ state.billsOpen = !state.billsOpen; render(); };
+      } else if(act==='toggle-golf-fold'){
+        el.onclick = ()=>{ state.golfOpen = !state.golfOpen; render(); };
+      } else if(act==='toggle-job-fold'){
+        el.onclick = ()=>{ state.jobOpen = !state.jobOpen; render(); };
+      } else if(act==='toggle-edu-fold'){
+        el.onclick = ()=>{ state.eduOpen = !state.eduOpen; render(); };
+      } else if(act==='toggle-finance-fold'){
+        el.onclick = ()=>{ state.financeOpen = !state.financeOpen; render(); };
+      } else if(act==='edu-add'){
+        el.onclick = async ()=>{
+          state.educations.push({id:uid(), namn:'', ort:'', studieform:'', start:'', omfattning:'', sistaAnsokan:'', lank:'', krav:'', beskrivning:'', kommentar:'', intresserad:false});
+          state.eduOpen = true;
+          render(); await saveEducations();
+        };
+      } else if(act==='edu-del'){
+        el.onclick = async ()=>{
+          const id = el.getAttribute('data-id');
+          sessionDeletedIds.add(id);
+          state.educations = state.educations.filter(r=>r.id!==id);
+          state.eduOpen = true;
+          render(); await saveEducations();
+        };
+      } else if(act==='edu-check'){
+        el.onclick = async ()=>{
+          const id = el.getAttribute('data-id');
+          const row = state.educations.find(r=>r.id===id);
+          if(row){ row.intresserad = !row.intresserad; state.eduOpen = true; render(); await saveEducations(); }
+        };
+      } else if(act==='job-add'){
+        el.onclick = async ()=>{
+          const section = el.getAttribute('data-section');
+          state.jobData[section] = state.jobData[section] || [];
+          let row;
+          if(section==='agreements') row = {id:uid(), insats:'', start:'', slut:'', done:false};
+          else if(section==='applications') row = {id:uid(), date:'', company:'', role:'', status:'', note:''};
+          else row = {id:uid(), date:'', time:'', contact:'', note:'', done:false};
+          state.jobData[section].push(row);
+          state.jobOpen = true;
+          render(); await saveJobData();
+        };
+      } else if(act==='job-del'){
+        el.onclick = async ()=>{
+          const section = el.getAttribute('data-section'), id = el.getAttribute('data-id');
+          sessionDeletedIds.add(id);
+          state.jobData[section] = (state.jobData[section]||[]).filter(r=>r.id!==id);
+          state.jobOpen = true;
+          render(); await saveJobData();
+        };
+      } else if(act==='job-check'){
+        el.onclick = async ()=>{
+          const section = el.getAttribute('data-section'), id = el.getAttribute('data-id');
+          const row = (state.jobData[section]||[]).find(r=>r.id===id);
+          if(row){ row.done = !row.done; state.jobOpen = true; render(); await saveJobData(); }
+        };
+      } else if(act==='golf-add'){
+        el.onclick = async ()=>{
+          state.golfRounds.push({id:uid(), date:'', course:'', score:'', par:'72', fairways:'', gir:'', putts:'', threePutts:'', scrambleOpp:'', scrambleMade:'', longestDrive:'', note:''});
+          state.golfOpen = true;
+          render(); await saveGolf();
+        };
+      } else if(act==='golf-del'){
+        el.onclick = async ()=>{
+          const id = el.getAttribute('data-id');
+          sessionDeletedIds.add(id);
+          state.golfRounds = state.golfRounds.filter(r=>r.id!==id);
+          state.golfOpen = true;
+          render(); await saveGolf();
+        };
+      } else if(act==='bill-add'){
+        el.onclick = async ()=>{
+          const kind = el.getAttribute('data-kind');
+          if(kind==='fixed'){
+            const currentYm = ymKey(state.year, state.month);
+            const tpl = {id:uid(), name:'', amount:'', fromYm:currentYm, toYm:null, history:[]};
+            state.fixedTemplates.push(tpl);
+            state.bills.fixed = state.bills.fixed || [];
+            state.bills.fixed.push({id:uid(), name:'', amount:'', dueDate:'', paid:false, templateId:tpl.id});
+            state.billsOpen = true;
+            render();
+            await saveFixedTemplates();
+            await saveBills();
+          } else {
+            state.bills[kind] = state.bills[kind]||[];
+            state.bills[kind].push({id:uid(), name:'', amount:'', dueDate:'', paid:false});
+            state.billsOpen = true;
+            render(); await saveBills();
+          }
+        };
+      } else if(act==='bill-del'){
+        el.onclick = async ()=>{
+          const kind = el.getAttribute('data-kind'), id = el.getAttribute('data-id');
+          sessionDeletedIds.add(id);
+          if(kind==='fixed'){
+            const currentYm = ymKey(state.year, state.month);
+            const row = (state.bills.fixed||[]).find(r=>r.id===id);
+            if(row && row.templateId){
+              const tpl = state.fixedTemplates.find(t=>t.id===row.templateId);
+              if(tpl){ tpl.toYm = currentYm; await saveFixedTemplates(); }
+            }
+            state.bills.fixed = (state.bills.fixed||[]).filter(r=>r.id!==id);
+            state.billsOpen = true;
+            render(); await saveBills();
+          } else {
+            state.bills[kind] = (state.bills[kind]||[]).filter(r=>r.id!==id);
+            state.billsOpen = true;
+            render(); await saveBills();
+          }
+        };
+      } else if(act==='bill-baseline'){
+        el.onclick = ()=>{
+          const id = el.getAttribute('data-id');
+          const row = (state.bills.fixed||[]).find(r=>r.id===id);
+          if(row && row.templateId){ guardedBaselineEdit(row.templateId); }
+        };
+      } else if(act==='bill-paid'){
+        el.onclick = async ()=>{
+          const kind = el.getAttribute('data-kind'), id = el.getAttribute('data-id');
+          const row = (state.bills[kind]||[]).find(r=>r.id===id);
+          if(row){ row.paid = !row.paid; state.billsOpen=true; render(); await saveBills(); }
+        };
+      }
+    });
+
+    root.querySelectorAll('input[data-act="bill-name"], input[data-act="bill-amount"], input[data-act="bill-duedate"]').forEach(inp=>{
+      if(inp._bound) return;
+      inp._bound = true;
+      inp.addEventListener('change', async ()=>{
+        const kind = inp.getAttribute('data-kind'), id = inp.getAttribute('data-id');
+        const row = (state.bills[kind]||[]).find(r=>r.id===id);
+        if(!row) return;
+        const act = inp.getAttribute('data-act');
+        if(act==='bill-name'){ row.name = inp.value; }
+        else if(act==='bill-duedate'){ row.dueDate = inp.value; }
+        else { row.amount = inp.value.replace(/[^0-9.,]/g,'').replace(',','.'); }
+        // om detta är ett överfört lån vars belopp nu justerats manuellt: sluta spegla originalet
+        if(kind==='loans' && act==='bill-amount' && row.carriedFromId){
+          row.userEdited = true;
+        }
+        state.billsOpen = true;
+        if(kind==='fixed' && row.templateId){
+          const tpl = state.fixedTemplates.find(t=>t.id===row.templateId);
+          if(tpl){
+            const currentYm = ymKey(state.year, state.month);
+            if(act==='bill-name'){
+              tpl.name = row.name;
+              await saveFixedTemplates();
+            } else if(act==='bill-amount'){
+              tpl.history = tpl.history || [];
+              const existingEntry = tpl.history.find(h=>h.fromYm===currentYm);
+              if(existingEntry){ existingEntry.value = row.amount; }
+              else { tpl.history.push({value:row.amount, fromYm:currentYm}); }
+              await saveFixedTemplates();
+            }
+          }
+        }
+        render();
+        await saveBills();
+      });
+    });
+
+    root.querySelectorAll('input[data-act="golf-field"]').forEach(inp=>{
+      if(inp._bound) return;
+      inp._bound = true;
+      inp.addEventListener('change', async ()=>{
+        const field = inp.getAttribute('data-field'), id = inp.getAttribute('data-id');
+        const row = state.golfRounds.find(r=>r.id===id);
+        if(!row) return;
+        let val = inp.value;
+        if(['score','par','fairways','gir','putts','threePutts','scrambleOpp','scrambleMade','longestDrive'].includes(field)){
+          val = val.replace(/[^0-9]/g,'');
+        }
+        const trackedFields = ['score','longestDrive','gir','putts','scrambleOpp','scrambleMade'];
+        const bestsBefore = trackedFields.includes(field) ? computeGolfBests(state.golfRounds) : null;
+        row[field] = val;
+        state.golfOpen = true;
+        render();
+        await saveGolf();
+        if(bestsBefore){
+          const bestsAfter = computeGolfBests(state.golfRounds);
+          if(field==='score' && bestsAfter.bestScore!=null && (bestsBefore.bestScore==null || bestsAfter.bestScore<bestsBefore.bestScore)){
+            celebrateRecord('Nytt personbästa – score '+bestsAfter.bestScore+'!');
+          } else if(field==='longestDrive' && bestsAfter.longestDrive!=null && (bestsBefore.longestDrive==null || bestsAfter.longestDrive>bestsBefore.longestDrive)){
+            celebrateRecord('Nytt personbästa – längsta drive '+bestsAfter.longestDrive+' m!');
+          } else if(field==='gir' && bestsAfter.bestGir!=null && (bestsBefore.bestGir==null || bestsAfter.bestGir>bestsBefore.bestGir)){
+            celebrateRecord('Nytt personbästa – '+bestsAfter.bestGir+'/18 GIR!');
+          } else if(field==='putts' && bestsAfter.bestPutts!=null && (bestsBefore.bestPutts==null || bestsAfter.bestPutts<bestsBefore.bestPutts)){
+            celebrateRecord('Nytt personbästa – bara '+bestsAfter.bestPutts+' puttar!');
+          } else if((field==='scrambleOpp'||field==='scrambleMade') && bestsAfter.bestScramblePct!=null && (bestsBefore.bestScramblePct==null || bestsAfter.bestScramblePct>bestsBefore.bestScramblePct)){
+            celebrateRecord('Nytt personbästa – scrambling '+bestsAfter.bestScramblePct+'%!');
+          }
+        }
+      });
+    });
+
+    root.querySelectorAll('input[data-act="job-field"]').forEach(inp=>{
+      if(inp._bound) return;
+      inp._bound = true;
+      inp.addEventListener('change', async ()=>{
+        const section = inp.getAttribute('data-section'), field = inp.getAttribute('data-field'), id = inp.getAttribute('data-id');
+        const row = (state.jobData[section]||[]).find(r=>r.id===id);
+        if(!row) return;
+        row[field] = inp.value;
+        state.jobOpen = true;
+        await saveJobData();
+      });
+    });
+
+    const wishlistEl = document.getElementById('ek-wishlist');
+    if(wishlistEl && !wishlistEl._bound){
+      wishlistEl._bound = true;
+      wishlistEl.addEventListener('change', async ()=>{
+        state.jobData.wishList = wishlistEl.value;
+        state.jobOpen = true;
+        await saveJobData();
+      });
+    }
+
+    root.querySelectorAll('[data-act="edu-field"]').forEach(inp=>{
+      if(inp._bound) return;
+      inp._bound = true;
+      inp.addEventListener('change', async ()=>{
+        const field = inp.getAttribute('data-field'), id = inp.getAttribute('data-id');
+        const row = state.educations.find(r=>r.id===id);
+        if(!row) return;
+        row[field] = inp.value;
+        state.eduOpen = true;
+        await saveEducations();
+      });
+    });
+
+    const financeNotesEl = document.getElementById('ek-finance-notes');
+    if(financeNotesEl && !financeNotesEl._bound){
+      financeNotesEl._bound = true;
+      financeNotesEl.addEventListener('change', async ()=>{
+        state.financeNotes = financeNotesEl.value;
+        state.financeOpen = true;
+        await saveFinanceNotes();
+      });
+    }
+
+    const newCheckInp = document.getElementById('ek-new-check');
+    if(newCheckInp && !newCheckInp._bound){
+      newCheckInp._bound = true;
+      newCheckInp.addEventListener('keydown', (e)=>{
+        if(e.key==='Enter'){ document.querySelector('[data-act="add-check"]').click(); newCheckInp.value=''; }
+      });
+    }
+  }
+
+  function changeMonth(delta){
+    let m = state.month + delta;
+    let y = state.year;
+    if(m<0){ m=11; y--; }
+    if(m>11){ m=0; y++; }
+    state.month = m; state.year = y;
+    state.openDay = null;
+    loadMonth();
+  }
+
+  function renderModal(){
+    render();
+    if(state.openDay===null) return;
+    const day = state.openDay;
+    const dateObj = new Date(state.year, state.month, day);
+    const weekdayFull = ['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'][dateObj.getDay()];
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'ek-modal-backdrop';
+    backdrop.innerHTML = `
+      <div class="ek-modal">
+        <div class="ek-modalhead">
+          <div class="ek-modaldate">${weekdayFull} ${day} ${MONTHNAMES[state.month]}</div>
+          <button class="ek-closebtn" data-act="close-modal">✕</button>
+        </div>
+        <div class="ek-modalbody">
+          <ul class="ek-checklist" id="ek-daylist"></ul>
+          <div class="ek-addrow">
+            <input class="ek-input" id="ek-new-daytask" placeholder="Lägg till uppgift för dagen..." />
+            <button class="ek-addbtn" data-act="add-daytask">Lägg till</button>
+          </div>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-dim);margin-top:9px;cursor:pointer;">
+            <input type="checkbox" id="ek-recurring-toggle" style="width:15px;height:15px;accent-color:var(--gais-green);" />
+            🔁 Upprepas varje månad (samma datum)
+          </label>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+
+    function renderDayList(){
+      const list = backdrop.querySelector('#ek-daylist');
+      const t = sortDayTasks(state.daytasks[day] || []);
+      if(t.length===0){
+        list.innerHTML = '<li class="ek-empty">Inga uppgifter för den här dagen ännu.</li>';
+        return;
+      }
+      list.innerHTML = t.map(item=>`
+        <li class="ek-checkitem${item.done?' done':''}">
+          <div class="ek-checkrow">
+            <span class="ek-checkbox" data-tid="${item.id}" data-act="toggle-day">${item.done?'✓':''}</span>
+            <span class="ek-checktext">${item.recurringId?'🔁 ':''}${escapeHtml(item.text)}</span>
+            <button class="ek-delbtn" data-tid="${item.id}" data-act="del-day">${isProtectedText(item.text)?'🔒':'✕'}</button>
+          </div>
+          <input class="ek-noteinput" data-tid="${item.id}" data-act="note-day" placeholder="Skriv en kommentar..." value="${escapeAttr(item.note||'')}" />
+        </li>
+      `).join('');
+      list.querySelectorAll('[data-act="toggle-day"]').forEach(b=>{
+        b.onclick = async ()=>{
+          const it = (state.daytasks[day]||[]).find(x=>x.id===b.getAttribute('data-tid'));
+          if(it){
+            it.done=!it.done;
+            renderDayList();
+            if(it.done && SPECIAL_DONE_MESSAGES[it.text]){
+              celebrateRecord(SPECIAL_DONE_MESSAGES[it.text]);
+            }
+            await saveDaytasks();
+            render();
+          }
+        };
+      });
+      list.querySelectorAll('[data-act="del-day"]').forEach(b=>{
+        b.onclick = async ()=>{
+          const tid = b.getAttribute('data-tid');
+          const it = (state.daytasks[day]||[]).find(x=>x.id===tid);
+          const doDelete = async ()=>{
+            sessionDeletedIds.add(tid);
+            state.daytasks[day] = (state.daytasks[day]||[]).filter(x=>x.id!==tid);
+            renderDayList(); await saveDaytasks();
+            if(it && it.recurringId){
+              sessionDeletedIds.add(it.recurringId);
+              state.recurringTasks = state.recurringTasks.filter(r=>r.id!==it.recurringId);
+              await saveRecurring();
+            }
+            if(it && it.matchId){
+              sessionDeletedIds.add(it.matchId);
+              state.gaisMatches = state.gaisMatches.filter(m=>m.id!==it.matchId);
+              await saveGaisMatches();
+            }
+            render();
+          };
+          if(it && isProtectedText(it.text)){
+            guardedDelete(doDelete);
+          } else {
+            await doDelete();
+          }
+        };
+      });
+      list.querySelectorAll('[data-act="note-day"]').forEach(inp=>{
+        inp.addEventListener('change', async ()=>{
+          const it = (state.daytasks[day]||[]).find(x=>x.id===inp.getAttribute('data-tid'));
+          if(it){ it.note = inp.value; await saveDaytasks(); }
+        });
+      });
+    }
+    renderDayList();
+
+    backdrop.querySelector('[data-act="close-modal"]').onclick = ()=>{
+      state.openDay = null;
+      document.body.removeChild(backdrop);
+    };
+    backdrop.addEventListener('click', (e)=>{
+      if(e.target===backdrop){ state.openDay=null; document.body.removeChild(backdrop); }
+    });
+    const addBtn = backdrop.querySelector('[data-act="add-daytask"]');
+    const addInp = backdrop.querySelector('#ek-new-daytask');
+    const recurringToggle = backdrop.querySelector('#ek-recurring-toggle');
+    async function addTask(){
+      const val = addInp.value.trim();
+      if(!val) return;
+      state.daytasks[day] = state.daytasks[day] || [];
+      let recurringId = null;
+      if(recurringToggle.checked){
+        const rt = {id:uid(), day:day, text:val};
+        state.recurringTasks.push(rt);
+        recurringId = rt.id;
+        await saveRecurring();
+      }
+      state.daytasks[day].push({id:uid(), text:val, done:false, note:'', recurringId});
+      addInp.value='';
+      recurringToggle.checked = false;
+      renderDayList();
+      await saveDaytasks();
+      render();
+    }
+    addBtn.onclick = addTask;
+    addInp.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addTask(); });
+  }
+
+  loadMonth();
+})();
+</script>
